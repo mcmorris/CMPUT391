@@ -5,11 +5,11 @@
  */
 
 /* users: user_name (24), password (24), date_registered */
-INSERT INTO users values('admin', 'password 4', SYSDATE);
+INSERT INTO users values('admin', 'annual', SYSDATE);
 INSERT INTO users values('mmorris', 'butts', SYSDATE);
-INSERT INTO users values('jwang', 'password', SYSDATE);
-INSERT INTO users values('tmossueda', 'password 2', SYSDATE);
-INSERT INTO users values('dmorris', 'password 3', SYSDATE);
+INSERT INTO users values('jwang', 'couple', SYSDATE);
+INSERT INTO users values('tmossueda', 'design', SYSDATE);
+INSERT INTO users values('dmorris', 'clover', SYSDATE);
 
 CREATE TABLE persons (
    user_name  varchar(24),
