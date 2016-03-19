@@ -1,6 +1,4 @@
-<html>
-<head>
-    import java.io.*;
+import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -24,56 +22,56 @@ import javax.servlet.http.*;
 
 public class PictureFromFile extends HttpServlet {
 
-    public void doGet(HttpServletRequest request,
-		      HttpServletResponse response)
-	throws ServletException, IOException {
+  public void doGet(HttpServletRequest request,
+                    HttpServletResponse response)
+      throws ServletException, IOException {
 
-	String gifLocation = "images/window.jpg";
+    String gifLocation = "images/window.jpg";
 
-	if ((gifLocation == null) ||
-	    (gifLocation.length() == 0)) {
-	    reportError(response, "Image File Not Specified");
-	    return;
-	}
-
-	String file = getServletContext().getRealPath(gifLocation);
-
-	try {
-
-	    BufferedInputStream in =
-		new BufferedInputStream(new FileInputStream(file));
-	    ByteArrayOutputStream byteStream =
-		new ByteArrayOutputStream(512);
-	    int imageByte;
-	    while((imageByte = in.read()) != -1) {
-		byteStream.write(imageByte);
-	    }
-	    in.close();
-	    String persistenceFlag =
-		request.getParameter("usePersistence");
-	    boolean usePersistence =
-		((persistenceFlag == null) ||
-		 (!persistenceFlag.equals("no")));
-
-
-	    response.setContentType("image/gif");
-
-	    if (usePersistence) {
-		response.setContentLength(byteStream.size());
-	    } 
-	    byteStream.writeTo(response.getOutputStream());
-	    response.sendRedirect("window");
-
-
-	} catch(IOException ioe) {
-	    reportError(response, "Error: " + ioe);
-	}
+    if ((gifLocation == null) ||
+        (gifLocation.length() == 0)) {
+      reportError(response, "Image File Not Specified");
+      return;
     }
 
-    public void reportError(HttpServletResponse response,
-			    String message)
-	throws IOException {
-	response.sendError(response.SC_NOT_FOUND,
-			   message);
+    String file = getServletContext().getRealPath(gifLocation);
+
+    try {
+
+      BufferedInputStream in =
+        new BufferedInputStream(new FileInputStream(file));
+      ByteArrayOutputStream byteStream =
+        new ByteArrayOutputStream(512);
+      int imageByte;
+      while((imageByte = in.read()) != -1) {
+        byteStream.write(imageByte);
+      }
+      in.close();
+      String persistenceFlag =
+      request.getParameter("usePersistence");
+      boolean usePersistence =
+        ((persistenceFlag == null) ||
+         (!persistenceFlag.equals("no")));
+
+
+      response.setContentType("image/gif");
+
+      if (usePersistence) {
+        response.setContentLength(byteStream.size());
+      } 
+      byteStream.writeTo(response.getOutputStream());
+      response.sendRedirect("window");
+
+
+    } catch(IOException ioe) {
+      reportError(response, "Error: " + ioe);
     }
+  }
+
+  public void reportError(HttpServletResponse response,
+                          String message)
+      throws IOException {
+    response.sendError(response.SC_NOT_FOUND,
+                       message);
+  }
 }
