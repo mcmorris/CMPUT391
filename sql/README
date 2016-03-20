@@ -1,0 +1,1 @@
+Use @sqlFile to execute a .sql file in SQLPlus.
