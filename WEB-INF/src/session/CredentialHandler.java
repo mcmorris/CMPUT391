@@ -3,6 +3,7 @@
  */
 package session;
 
+import java.io.IOException;
 import java.sql.*; 
 
 import javax.servlet.http.Cookie;
@@ -107,6 +108,42 @@ public class CredentialHandler {
 		if (conn != null) conn.close();
 		return (passwd.equals(trimmedPwd));
 	}
+	
+	/*
+	 * Checks user has established session, otherwise kicks back to login page.
+	 */
+	public boolean credentialCheck(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+    	if(session.getAttribute("user") == null) {
+    	    response.sendRedirect("login.html");
+    	    return false;
+    	}
+    	
+    	return true;
+	}
+	
+	/*
+	 * Gets user name of current session user.
+	 */
+	public String getSessionUserName(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String userName = null;
+		if (credentialCheck(request, response) == true) {
+			HttpSession session = request.getSession(false);
+			userName = (String) session.getAttribute("user");
+			
+			// Take value from cookie if available.
+			Cookie[] cookies = request.getCookies();
+			if(cookies !=null) {
+				for(Cookie cookie : cookies) {
+				    if(cookie.getName().equals("user")) userName = cookie.getValue();
+				}
+			}
+		}
+		
+		return userName;
+	}
+	
+	
 
 
 }
