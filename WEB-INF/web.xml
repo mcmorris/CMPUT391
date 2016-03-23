@@ -6,12 +6,12 @@
  version="2.4">
 
 <servlet>
-<servlet-name>FirstServlet</servlet-name>
-<servlet-class>FirstServlet</servlet-class>
+<servlet-name>LoginServlet</servlet-name>
+<servlet-class>session.LoginServlet</servlet-class>
 </servlet>
 <servlet-mapping>
-<servlet-name>FirstServlet</servlet-name>
-<url-pattern>/firstservlet</url-pattern>
+<servlet-name>LoginServlet</servlet-name>
+<url-pattern>/loginservlet</url-pattern>
 </servlet-mapping>
 
 <servlet>
