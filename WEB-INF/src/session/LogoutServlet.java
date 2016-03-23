@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class LogoutServlet
  * @author mcmorris
- * Adapted from sources: http:/http://www.journaldev.com/1907/java-servlet-session-management-tutorial-with-examples-of-cookies-httpsession-and-url-rewriting
+ * Adapted from sources: http://www.journaldev.com/1907/java-servlet-session-management-tutorial-with-examples-of-cookies-httpsession-and-url-rewriting
  */
 public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -28,13 +28,17 @@ public class LogoutServlet extends HttpServlet {
 	                System.out.println("JSESSIONID="+cookie.getValue());
 	                break;
 	            }
+	            
+	            // Send response invalidating our own cookies.
+	            cookie.setMaxAge(0);
+	            response.addCookie(cookie);
 	        }
         }
         
         //invalidate the session if exists
         HttpSession session = request.getSession(false);
         System.out.println("User="+session.getAttribute("user"));
-        if(session != null){
+        if(session != null) {
             session.invalidate();
         }
         
