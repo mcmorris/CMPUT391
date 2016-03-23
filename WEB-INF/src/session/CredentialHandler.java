@@ -55,6 +55,33 @@ public class CredentialHandler {
 	}
 
 	/*
+	 * End an existing session with user from request
+	 */
+	protected void endSession(HttpServletRequest request, HttpServletResponse response) {
+		response.setContentType("text/html");
+        Cookie[] cookies = request.getCookies();
+        if(cookies != null) {
+	        for(Cookie cookie : cookies) {
+	            if(cookie.getName().equals("JSESSIONID")) {
+	                System.out.println("JSESSIONID="+cookie.getValue());
+	                break;
+	            }
+	            
+	            // Send response invalidating our own cookies.
+	            cookie.setMaxAge(0);
+	            response.addCookie(cookie);
+	        }
+        }
+        
+        //invalidate the session if exists
+        HttpSession session = request.getSession(false);
+        System.out.println("User="+session.getAttribute("user"));
+        if(session != null) {
+            session.invalidate();
+        }
+	}
+	
+	/*
 	 *	Checks logon query matches existing user record
 	 */
 	public boolean isValidLogin(String userName, String passwd) throws Exception, SQLException {
