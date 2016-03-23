@@ -1,17 +1,19 @@
+/**
+ * 
+ */
 package com.cmput391.servlet.session;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.*; 
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * @author mcmorris
+ *
+ */
 public class CredentialHandler {
     private static String dbUser = "mcmorris";
     private static String dbPassword = "oracleseat5mules";
