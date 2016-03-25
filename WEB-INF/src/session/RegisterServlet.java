@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 public class RegisterServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
     
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// get request parameters for userID and password
@@ -30,15 +30,14 @@ public class RegisterServlet extends HttpServlet {
 	 	String email = request.getParameter("EMAIL");
 	 	String phone = request.getParameter("PHONE");
 	 	
-		boolean valid = false;		
-    
 		PrintWriter out = response.getWriter();
 		Connection conn = null;
+		boolean valid = false;
 		
 		try {
 			
 			//establish connection to the underlying database
-			conn = CredentialHandler.getInstance().getConnection();
+			conn = DBHandler.getInstance().getConnection();
 			valid = isValidRegistration(user, pwd);
 			if(valid) {
 				conn.setAutoCommit(false);
@@ -50,34 +49,26 @@ public class RegisterServlet extends HttpServlet {
 				state.executeUpdate(sqlPersons);
 				conn.commit();
 				
-	            RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
-	            out.println("<font color=green>Your registration has been processed.  Please login now.</font>");
-	            rd.include(request, response);
+			        RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+			        out.println("<font color=green>Your registration has been processed.  Please login now.</font>");
+			        rd.include(request, response);
 			}
 			
-			conn.close();
+			DBHandler.getInstance().safeCloseConn(conn);
 
-		// Must get rid of the fugliness...
 		} catch (SQLException sqle) {
-			try {
-				if (conn != null) { 
-					conn.rollback();
-					conn.close();
-				}
-			} catch (SQLException sqle1) {
-				out.println("<hr>" + sqle1.getMessage() + "<hr>");
-			}
+			DBHandler.getInstance().safeCloseTrans(conn);
 		} catch (Exception ex) {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
 		
-        if (valid == false) {
-            RequestDispatcher rd = getServletContext().getRequestDispatcher("/register.html");
-            out.println("<font color=red>The credentials in your registration request cannot be used.  Please try again.</font>");
-            rd.include(request, response);
-        }
- 
-    }
+	        if (valid == false) {
+	            RequestDispatcher rd = getServletContext().getRequestDispatcher("/register.html");
+	            out.println("<font color=red>The credentials in your registration request cannot be used.  Please try again.</font>");
+	            rd.include(request, response);
+	        }
+	        
+    	}
 	
 	/*
 	 * Check username/password do not match an existing account.
@@ -90,11 +81,10 @@ public class RegisterServlet extends HttpServlet {
 		}
 		catch(Exception ex) {
 			System.out.println("<hr>" + ex.getMessage() + "<hr>");
-		}		
+		}
 		
 		return isValid;
 	}
 
 
-     
 }
