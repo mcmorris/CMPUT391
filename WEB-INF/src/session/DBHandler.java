@@ -45,7 +45,7 @@ public class DBHandler {
 	 *	 Safely close a connection with running transaction.
 	 */
 	public void safeCloseTrans(Connection conn) {
-		if (conn == Null) return;
+		if (conn == null) return;
 	
 		try {
 			if (conn != null) { 
@@ -66,7 +66,7 @@ public class DBHandler {
 	}
 	
 	public void safeCloseConn(Connection conn) {
-		if (conn == Null) return;
+		if (conn == null) return;
 		
 		try {
 			conn.close();
