@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet {
 			valid = CredentialHandler.getInstance().isValidLogin(user, pwd);
 			if(valid) {
 				CredentialHandler.getInstance().createSession(request, response, 30);
-            	String encodedURL = response.encodeRedirectURL("LoginSuccess.jsp");
+				String encodedURL = response.encodeRedirectURL("LoginSuccess.jsp");
 				response.sendRedirect(encodedURL);
         	}
  
