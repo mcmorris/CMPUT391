@@ -16,8 +16,8 @@ import javax.servlet.http.HttpSession;
  *
  */
 public class DBHandler {
-  private static String dbUser = "mcmorris";
-  private static String dbPassword = "oracleseat5mules";
+	private static String dbUser = "mcmorris";
+    	private static String dbPassword = "oracleseat5mules";
 	private static String dbDriverName = "oracle.jdbc.driver.OracleDriver";
 	private static String dbString = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS";
 	private static DBHandler instance = null;
@@ -54,8 +54,8 @@ public class DBHandler {
 			}
 		}
 		// Catch rollback / close error.
-		catch (SQLException sqle1) {
-			out.println("<hr>" + sqle1.getMessage() + "<hr>");
+		catch (SQLException sqle) {
+			out.println("<hr>" + sqle.getMessage() + "<hr>");
 		}
 		// Regardless of rollback, attempt close.
 		finally 
