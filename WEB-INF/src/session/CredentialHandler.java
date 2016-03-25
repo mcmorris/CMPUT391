@@ -16,10 +16,6 @@ import javax.servlet.http.HttpSession;
  *
  */
 public class CredentialHandler {
-    private static String dbUser = "mcmorris";
-    private static String dbPassword = "oracleseat5mules";
-	private static String dbDriverName = "oracle.jdbc.driver.OracleDriver";
-	private static String dbString = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS";
 	private static CredentialHandler instance = null;
 
 	protected CredentialHandler() {
@@ -31,16 +27,7 @@ public class CredentialHandler {
 		}
 		return instance;
 	}
-
-	/*
-	 *   Connect to the specified database
-	 */
-	public Connection getConnection() throws Exception {
-		Class drvClass = Class.forName(dbDriverName); 
-		DriverManager.registerDriver((Driver) drvClass.newInstance());
-		return( DriverManager.getConnection(dbString, dbUser, dbPassword) );
-	}
-
+	
 	/*
 	 * Create a new session with user from request
 	 */
@@ -50,7 +37,7 @@ public class CredentialHandler {
 		HttpSession session = request.getSession();
 		session.setAttribute("user", user);
 		session.setMaxInactiveInterval(timeoutMin*60);
-        Cookie userName = new Cookie("user", user);
+		Cookie userName = new Cookie("user", user);
 		response.addCookie(userName);
 		return;
 	}
@@ -60,26 +47,26 @@ public class CredentialHandler {
 	 */
 	protected void endSession(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("text/html");
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
-	        for(Cookie cookie : cookies) {
-	            if(cookie.getName().equals("JSESSIONID")) {
-	                System.out.println("JSESSIONID="+cookie.getValue());
-	                break;
-	            }
-	            
-	            // Send response invalidating our own cookies.
-	            cookie.setMaxAge(0);
-	            response.addCookie(cookie);
+	        Cookie[] cookies = request.getCookies();
+	        if(cookies != null) {
+		        for(Cookie cookie : cookies) {
+		            if(cookie.getName().equals("JSESSIONID")) {
+		                System.out.println("JSESSIONID="+cookie.getValue());
+		                break;
+		            }
+		            
+		            // Send response invalidating our own cookies.
+		            cookie.setMaxAge(0);
+		            response.addCookie(cookie);
+		        }
 	        }
-        }
-        
-        //invalidate the session if exists
-        HttpSession session = request.getSession(false);
-        System.out.println("User="+session.getAttribute("user"));
-        if(session != null) {
-            session.invalidate();
-        }
+	        
+	        //invalidate the session if exists
+	        HttpSession session = request.getSession(false);
+	        System.out.println("User="+session.getAttribute("user"));
+	        if(session != null) {
+	            session.invalidate();
+	        }
 	}
 	
 	/*
@@ -87,16 +74,16 @@ public class CredentialHandler {
 	 */
 	public boolean isValidLogin(String userName, String passwd) throws Exception, SQLException {
 		//select the user table from the underlying db and validate the user name and password
-        Statement query = null;
+        	Statement query = null;
 		ResultSet results = null;
 
 		// Needs protection from injection attack.
-        String sql = "select password from users where user_name = '" + userName + "'";
+        	String sql = "select password from users where user_name = '" + userName + "'";
 
 		String trimmedPwd = "";
 		Connection conn = null;		
 		
-		conn = this.getConnection();
+		conn = DBHandler.getInstance().getConnection();
 		conn.setAutoCommit(false);
 
 		query = conn.createStatement();
@@ -105,7 +92,7 @@ public class CredentialHandler {
 			trimmedPwd = (results.getString(1)).trim();
 		}
 
-		if (conn != null) conn.close();
+		DBHandler.getInstance().safeCloseConn(conn);
 		return (passwd.equals(trimmedPwd));
 	}
 	
@@ -113,13 +100,13 @@ public class CredentialHandler {
 	 * Checks user has established session, otherwise kicks back to login page.
 	 */
 	public boolean credentialCheck(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession(false);
-    	if(session.getAttribute("user") == null) {
-    	    response.sendRedirect("login.html");
-    	    return false;
-    	}
-    	
-    	return true;
+	        HttpSession session = request.getSession(false);
+	    	if(session.getAttribute("user") == null) {
+	    	    response.sendRedirect("login.html");
+	    	    return false;
+	    	}
+	    	
+	    	return true;
 	}
 	
 	/*
@@ -143,7 +130,5 @@ public class CredentialHandler {
 		return userName;
 	}
 	
-	
-
 
 }
