@@ -21,7 +21,7 @@ public class CreateGroupServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			// get request parameters for group name
+		// get request parameters for group name
 	 	String gName = request.getParameter("GNAME");
 		boolean valid = false;		
     
@@ -43,10 +43,10 @@ public class CreateGroupServlet extends HttpServlet {
 				state.executeUpdate(sqlGroups);
 				conn.commit();
 				
-	            RequestDispatcher rd = getServletContext().getRequestDispatcher("/addFriend.html");
-	            out.println("<font color=green>Your group has been processed.  Please add friends to your groups now.</font>");
-	            rd.include(request, response);
-      }
+	            		RequestDispatcher rd = getServletContext().getRequestDispatcher("/addFriend.html");
+	            		out.println("<font color=green>Your group has been processed.  Please add friends to your groups now.</font>");
+	            		rd.include(request, response);
+			}
 			
 			DBHandler.getInstance().safeCloseConn(conn);
 
@@ -56,14 +56,13 @@ public class CreateGroupServlet extends HttpServlet {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
 		
-    if (valid == false) {
-      RequestDispatcher rd = getServletContext().getRequestDispatcher("/addGroup.html");
-      out.println("<font color=red>This group cannot be added.  Please try a different group.</font>");
-      rd.include(request, response);
-    }
-
-	        
-  }
+	    	if (valid == false) {
+			 RequestDispatcher rd = getServletContext().getRequestDispatcher("/addGroup.html");
+		      	out.println("<font color=red>This group cannot be added.  Please try a different group.</font>");
+		      	rd.include(request, response);
+	    	}
+		
+	}
 	
 	/*
 	 * Check for valid group name.
