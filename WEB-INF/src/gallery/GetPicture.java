@@ -35,7 +35,7 @@ public class GetPicture extends HttpServlet implements SingleThreadModel {
      *          select image from yuan.photos where photo_id = PHOTO_ID   
      *    Finally, it sends the picture to the client
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse res) throws ServletException, IOException {
+	public void doGet(HttpServletRequest request, HttpServletResponse res) throws ServletException, IOException {
 
         Connection conn = null;
 
