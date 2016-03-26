@@ -1,7 +1,7 @@
 **
  * 
  */
-package session;
+package gallery;
 
 import java.io.IOException;
 import java.io.PrintWriter;
