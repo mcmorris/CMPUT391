@@ -2,40 +2,33 @@
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
- http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
- version="2.4"> 
- 
-   <servlet>
-        <servlet-name>FirstServlet</servlet-name>
-        <servlet-class>FirstServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>FirstServlet</servlet-name>
-        <url-pattern>/firstservlet</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>Asn2Sampling</servlet-name>
-        <servlet-class>>Asn2Sampling</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Asn2Sampling</servlet-name>
-        <url-pattern>/Asn2Sampling</url-pattern>
-    </servlet-mapping>
+ http://java.sun.com/xml/ns/jee/web-app_2_4.xsd"
+ version="2.4">
 
-   <servlet>
-        <servlet-name>SessionInfo</servlet-name>
-        <servlet-class>SessionInfo</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>SessionInfo</servlet-name>
-        <url-pattern>/SessionInfo</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>URLSession</servlet-name>
-        <servlet-class>>URLSession</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>URLSession</servlet-name>
-        <url-pattern>/URLSession</url-pattern>
-    </servlet-mapping>
+<servlet>
+<servlet-name>LoginServlet</servlet-name>
+<servlet-class>session.LoginServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>LoginServlet</servlet-name>
+<url-pattern>/loginservlet</url-pattern>
+</servlet-mapping>
+
+<servlet>
+<servlet-name>LogoutServlet</servlet-name>
+<servlet-class>session.LogoutServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>LogoutServlet</servlet-name>
+<url-pattern>/LogoutServlet</url-pattern>
+</servlet-mapping>
+
+<servlet>
+<servlet-name>URLSession</servlet-name>
+<servlet-class>URLSession</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>URLSession</servlet-name>
+<url-pattern>/URLSession</url-pattern>
+</servlet-mapping>
 </web-app>
