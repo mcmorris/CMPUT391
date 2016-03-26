@@ -27,7 +27,7 @@ public class PictureBrowse extends HttpServlet implements SingleThreadModel {
      *
      */
     public void doGet(HttpServletRequest request, HttpServletResponse res) throws ServletException, IOException {
-    
+        
       	//  send out the HTML file
       	res.setContentType("text/html");
       	PrintWriter out = res.getWriter();
@@ -46,27 +46,27 @@ public class PictureBrowse extends HttpServlet implements SingleThreadModel {
       	 *   to execute the given query
       	 */
       	try {
-      	    String query = "select photo_id from pictures";
-        
-      	    conn = DBHandler.getInstance().getConnection();
-      	    Statement stmt = conn.createStatement();
-      	    ResultSet rset = stmt.executeQuery(query);
-      	    String p_id = "";
-        
-      	    while (rset.next()) {
+            String query = "select photo_id from pictures";
+            
+            conn = DBHandler.getInstance().getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rset = stmt.executeQuery(query);
+            String p_id = "";
+            
+            while( rset.next() ) {
                 p_id = (rset.getObject(1)).toString();
-        
-      	        // specify the servlet for the image
+                
+                // specify the servlet for the image
                 out.println("<a href=\"/yuan/servlet/GetOnePic?big"+p_id+"\">");
-      	        // specify the servlet for the thumbnail
-      	        out.println("<img src=\"/yuan/servlet/GetOnePic?"+p_id + "\"></a>");
+                // specify the servlet for the thumbnail
+                out.println("<img src=\"/yuan/servlet/GetOnePic?"+p_id + "\"></a>");
             }
-        	
-        	stmt.close();
-        	  
-        	DBHandler.getInstance().safeCloseConn(conn);
-        	  
-        } catch ( Exception ex ){ out.println(ex.toString()); }
+            
+            stmt.close();
+            
+            DBHandler.getInstance().safeCloseConn(conn);
+            
+        } catch(Exception ex){ out.println(ex.toString()); }
             
         out.println("</body>");
         out.println("</html>");
