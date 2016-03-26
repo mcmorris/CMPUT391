@@ -53,15 +53,15 @@ public class PictureBrowse extends HttpServlet implements SingleThreadModel {
       	    ResultSet rset = stmt.executeQuery(query);
       	    String p_id = "";
         
-      	    while (rset.next() ) {
-      		    p_id = (rset.getObject(1)).toString();
+      	    while (rset.next()) {
+                p_id = (rset.getObject(1)).toString();
         
       	        // specify the servlet for the image
                 out.println("<a href=\"/yuan/servlet/GetOnePic?big"+p_id+"\">");
       	        // specify the servlet for the thumbnail
       	        out.println("<img src=\"/yuan/servlet/GetOnePic?"+p_id + "\"></a>");
-        	  }
-        	  
+            }
+        	
         	stmt.close();
         	  
         	DBHandler.getInstance().safeCloseConn(conn);
