@@ -37,109 +37,49 @@ public class GetPicture extends HttpServlet implements SingleThreadModel {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse res) throws ServletException, IOException {
 
-      	//  send out the HTML file
-      	res.setContentType("text/html");
-      	PrintWriter out = res.getWriter();
-      	
         Connection conn = null;
-        
-      	out.println("<html>");
-      	out.println("<head>");
-      	out.println("<title> Image List </title>");
-      	out.println("</head>");
-      	out.println("<body bgcolor=\"#000000\" text=\"#cccccc\" >");
-      	out.println("<center>");
-      	out.println("<h3>Most Popular Images</h3>");
-        
+
+		//  construct the query  from the client's QueryString
+		String picId = request.getQueryString();
+		String query;
+
+		if(picId.startsWith("big"))  
+			query = "select image from pictures where photo_id=" + picid.substring(3);
+		else
+			query = "select sm_image from pictures where photo_id=" + picid;
+		
+		ServletOutputStream out = response.getOutputStream();
+	
       	/*
       	 *   to execute the given query
       	 */
       	try {
-            String query = "select photo_id from pictures";
-            
-            conn = DBHandler.getInstance().getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rset = stmt.executeQuery(query);
-            String p_id = "";
-            
-            while( rset.next() ) {
-                p_id = (rset.getObject(1)).toString();
-                
-                // specify the servlet for the image
-                out.println("<a href=\"/yuan/servlet/GetOnePic?big"+p_id+"\">");
-                // specify the servlet for the thumbnail
-                out.println("<img src=\"/yuan/servlet/GetOnePic?"+p_id + "\"></a>");
-            }
-            
+      		conn = DBHandler.getInstance().getConnection();
+			Statement stmt = conn.createStatement();
+			ResultSet rset = stmt.executeQuery(query);
+
+			if( rset.next() ) {
+				response.setContentType("image/gif");
+				InputStream input = rset.getBinaryStream(1);	    
+				int imageByte;
+				while((imageByte = input.read()) != -1) {
+				    out.write(imageByte);
+				}
+				input.close();
+			} 
+			else {
+				out.println("no picture available");
+			}
+			
             stmt.close();
             
             DBHandler.getInstance().safeCloseConn(conn);
             
-        } catch(Exception ex){ out.println(ex.toString()); }
-            
-        out.println("</body>");
-        out.println("</html>");
+        } 
+        catch(Exception ex) { 
+        	out.println(ex.toString()); 
+        }
+		
     }
     
-}
-
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.sql.*;
-
-public class GetOnePic extends HttpServlet 
-    implements SingleThreadModel {
-
-
-    public void doGet(HttpServletRequest request,
-		      HttpServletResponse response)
-	throws ServletException, IOException {
-	
-	//  construct the query  from the client's QueryString
-	String picid  = request.getQueryString();
-	String query;
-
-	if ( picid.startsWith("big") )  
-	    query = 
-	     "select image from pictures where photo_id=" + picid.substring(3);
-	else
-	    query = "select sm_image from pictures where photo_id=" + picid;
-
-	ServletOutputStream out = response.getOutputStream();
-
-	/*
-	 *   to execute the given query
-	 */
-	Connection conn = null;
-	try {
-	    conn = getConnected();
-	    Statement stmt = conn.createStatement();
-	    ResultSet rset = stmt.executeQuery(query);
-
-	    if ( rset.next() ) {
-		response.setContentType("image/gif");
-		InputStream input = rset.getBinaryStream(1);	    
-		int imageByte;
-		while((imageByte = input.read()) != -1) {
-		    out.write(imageByte);
-		}
-		input.close();
-	    } 
-	    else 
-		out.println("no picture available");
-	} catch( Exception ex ) {
-	    out.println(ex.getMessage() );
-	}
-	// to close the connection
-	finally {
-	    try {
-		conn.close();
-	    } catch ( SQLException ex) {
-		out.println( ex.getMessage() );
-	    }
-	}
-    }
-
-
 }
