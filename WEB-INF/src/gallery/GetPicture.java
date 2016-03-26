@@ -37,7 +37,7 @@ public class GetPicture extends HttpServlet implements SingleThreadModel {
      */
 	public void doGet(HttpServletRequest request, HttpServletResponse res) throws ServletException, IOException {
 
-        Connection conn = null;
+        	Connection conn = null;
 
 		//  construct the query  from the client's QueryString
 		String picId = request.getQueryString();
@@ -50,36 +50,36 @@ public class GetPicture extends HttpServlet implements SingleThreadModel {
 		
 		ServletOutputStream out = response.getOutputStream();
 	
-      	/*
-      	 *   to execute the given query
-      	 */
-      	try {
-      		conn = DBHandler.getInstance().getConnection();
-			Statement stmt = conn.createStatement();
-			ResultSet rset = stmt.executeQuery(query);
-
-			if( rset.next() ) {
-				response.setContentType("image/gif");
-				InputStream input = rset.getBinaryStream(1);	    
-				int imageByte;
-				while((imageByte = input.read()) != -1) {
-				    out.write(imageByte);
+	      	/*
+	      	 *   to execute the given query
+	      	 */
+	      	try {
+	      		conn = DBHandler.getInstance().getConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rset = stmt.executeQuery(query);
+	
+				if( rset.next() ) {
+					response.setContentType("image/gif");
+					InputStream input = rset.getBinaryStream(1);	    
+					int imageByte;
+					while((imageByte = input.read()) != -1) {
+					    out.write(imageByte);
+					}
+					input.close();
+				} 
+				else {
+					out.println("no picture available");
 				}
-				input.close();
-			} 
-			else {
-				out.println("no picture available");
-			}
+				
+			stmt.close();
 			
-            stmt.close();
-            
-            DBHandler.getInstance().safeCloseConn(conn);
-            
-        } 
-        catch(Exception ex) { 
-        	out.println(ex.toString()); 
-        }
+			DBHandler.getInstance().safeCloseConn(conn);
+			
+		} 
+		catch(Exception ex) { 
+			out.println(ex.toString()); 
+		}
 		
-    }
-    
+	}
+	
 }
