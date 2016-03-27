@@ -83,3 +83,17 @@ CREATE TABLE images (
    FOREIGN KEY(owner_name) REFERENCES users,
    FOREIGN KEY(permitted) REFERENCES groups
 );
+
+CREATE SEQUENCE images_seq
+  START WITH 1
+  INCREMENT BY 1
+  CACHE 100;
+
+CREATE OR REPLACE TRIGGER images_seq 
+BEFORE INSERT ON images 
+FOR EACH ROW
+BEGIN
+  SELECT images_seq.NEXTVAL
+  INTO   :new.photo_id
+  FROM   dual;
+END;
