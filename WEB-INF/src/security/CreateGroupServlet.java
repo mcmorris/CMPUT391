@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gallery;
+package security;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,6 +12,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import session.CredentialHandler;
+import session.DBHandler;
 
 /**
  * @author mcmorris
@@ -36,8 +39,8 @@ public class CreateGroupServlet extends HttpServlet {
 			if(valid) {
 				conn.setAutoCommit(false);
 
-				user = CredentialHandler.getInstance().getSessionUserName(request, response);
-				String sqlGroups = "INSERT INTO group values('" + AUTOID + "', '" + user + "', '" + gName + "', SYSDATE);";
+				String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+				String sqlGroups = "INSERT INTO group values(0, '" + user + "', '" + gName + "', SYSDATE);";
 				
 				Statement state = conn.createStatement();
 				state.executeUpdate(sqlGroups);
@@ -71,7 +74,7 @@ public class CreateGroupServlet extends HttpServlet {
 		boolean isValid = false;
 		
 		// TODO: Prevent name of 'public' and 'private'?
-		isValid = (gName.isEmpty?() == false);
+		isValid = (gName.isEmpty() == false);
 		
 		return isValid;
 	}

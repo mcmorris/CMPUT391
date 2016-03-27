@@ -4,6 +4,12 @@
  *              Winter, 2016
  *  Author:     Prof. Li-Yan Yuan
  */
+
+DROP SEQUENCE images_seq;
+DROP SEQUENCE groups_seq;
+DROP TRIGGER images_ins;
+DROP TRIGGER groups_ins;
+
 DROP TABLE images;
 DROP TABLE group_lists;
 DROP TABLE groups;
@@ -41,8 +47,24 @@ CREATE TABLE groups (
    FOREIGN KEY(user_name) REFERENCES users
 );
 
-INSERT INTO groups values(1,null,'public', sysdate);
-INSERT INTO groups values(2,null,'private',sysdate);
+CREATE SEQUENCE groups_seq
+  START WITH 1
+  INCREMENT BY 1
+  CACHE 100;
+
+CREATE OR REPLACE TRIGGER groups_ins 
+BEFORE INSERT ON groups 
+FOR EACH ROW
+BEGIN
+  SELECT groups_seq.NEXTVAL
+  INTO   :new.group_id
+  FROM   dual;
+END;
+
+/
+
+INSERT INTO groups values(0,null,'public', sysdate);
+INSERT INTO groups values(0,null,'private',sysdate);
 
 CREATE TABLE group_lists (
    group_id    int,
@@ -68,3 +90,19 @@ CREATE TABLE images (
    FOREIGN KEY(owner_name) REFERENCES users,
    FOREIGN KEY(permitted) REFERENCES groups
 );
+
+CREATE SEQUENCE images_seq
+  START WITH 1
+  INCREMENT BY 1
+  CACHE 100;
+
+CREATE OR REPLACE TRIGGER images_seq 
+BEFORE INSERT ON images 
+FOR EACH ROW
+BEGIN
+  SELECT images_seq.NEXTVAL
+  INTO   :new.photo_id
+  FROM   dual;
+END;
+
+/
