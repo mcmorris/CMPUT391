@@ -109,7 +109,7 @@
 	<h4>Upload Image below
 	</h4>
 	Please input or select the path of the image!
-	<FROM name="upload-image" method="POST" enctype="multipart/form-data" action="servlet/UploadImageLogicSQL">
+	<FORM name="upload-image" method="POST" enctype="multipart/form-data" action="UploadServlet">
 		<TABLE style="margin: 0px auto">
 		<!-- <TR>
 				<TD><B><I><font color=Maroon>Choose Patient: </font></I></B></TD>
