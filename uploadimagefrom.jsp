@@ -5,7 +5,6 @@
     <title>Upload Images to Online Storage</title>
 <!--    <%@ page import="java.util.*" %>
     <%@ page import="java.sql.*" %>
-    <%@include file="../util/dbLogin.jsp"%>
     <%
         // Encode the successful redirect
         String encodeUpload = response.encodeURL("/proj1/uploading/UploadImage");
