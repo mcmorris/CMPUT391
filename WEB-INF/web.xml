@@ -13,14 +13,6 @@
 <servlet-name>LoginServlet</servlet-name>
 <url-pattern>/loginservlet</url-pattern>
 </servlet-mapping>
- <servlet>
-<servlet-name>UploadImage</servlet-name>
-<servlet-class>/UploadImage</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>UploadImage</servlet-name>
-<url-pattern>/UploadImage</url-pattern>
-</servlet-mapping>
 
 <servlet>
 <servlet-name>LogoutServlet</servlet-name>
@@ -39,6 +31,7 @@
 <servlet-name>CreateGroupServlet</servlet-name>
 <url-pattern>/creategroupservlet</url-pattern>
 </servlet-mapping>
+
 <servlet>
 <servlet-name>ModifyGroupServlet</servlet-name>
 <servlet-class>security.ModifyGroupServlet</servlet-class>
@@ -48,5 +41,13 @@
 <url-pattern>/modifygroupservlet</url-pattern>
 </servlet-mapping>
 
-</web-app>
+<servlet>
+<servlet-name>UploadServlet</servlet-name>
+<servlet-class>session.UploadServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>UploadServlet</servlet-name>
+<url-pattern>/uploadservlet</url-pattern>
+</servlet-mapping>
 
+</web-app>
