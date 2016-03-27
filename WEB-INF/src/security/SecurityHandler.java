@@ -3,13 +3,8 @@
  */
 package security;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.*; 
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,56 +15,163 @@ import session.DBHandler;
  * @author mcmorris
  *
  */
-public class ModifyGroupServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-    
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// get request parameters for group name
-		String gIdStr = request.getParameter("GROUPID");
-		String selUser = request.getParameter("SELUSER");
-		String mode = request.getParameter("MODE");
-	    
-	 	PrintWriter out = response.getWriter();
-	 	Connection conn = null;
+public class SecurityHandler {
+	private static SecurityHandler instance = null;
+
+	protected SecurityHandler() {
+		// Exists only to defeat instantiation.
+	}
+	public static SecurityHandler getInstance() {
+		if(instance == null) {
+			instance = new SecurityHandler();
+		}
+		return instance;
+	}
+	
+	/*
+	 * Create a new session with user from request
+	 */
+	protected boolean isPermitted(HttpServletRequest request, HttpServletResponse response, int pictureId) {
+		boolean permitted = false;
 		
-	 	try {
-	 		
-	 		//establish connection to the underlying database
-	 		conn = DBHandler.getInstance().getConnection();
-	 		conn.setAutoCommit(false);
-	 		
-	 		String user = CredentialHandler.getInstance().getSessionUserName(request, response);
-			String sqlGroups = "";
+		//select the user table from the underlying db and validate the user name and password
+        Statement query = null;
+		ResultSet results = null;
+
+		// Needs protection from injection attack.
+        String picSql = "select owner_name, permitted from images where photo_id = '" + pictureId + "'";
+        
+		String trimmedOwnerName = "";
+		String trimmedGroupId = "";
+		Connection conn = null;		
+		
+		try
+		{
+			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+			if (user.equals("admin") == true) return true; 		// Admin gets special privileges.
 			
-			int gId = Integer.parseInt(gIdStr);
+			conn = DBHandler.getInstance().getConnection();
 			
-			if(mode == "add") {
-				sqlGroups = "INSERT INTO grouplist values(" + gId + ", '" + selUser + "', SYSDATE, null);";
+			query = conn.createStatement();
+			results = query.executeQuery(picSql);
+			while(results != null && results.next()) {
+				trimmedOwnerName = (results.getString(1)).trim();
+				trimmedGroupId = (results.getString(2)).trim();
 			}
+			
+			int groupId = Integer.parseInt(trimmedGroupId);
+			
+			// Public means always true.
+			if (groupId == 1) permitted = true;
+			
+			// Private means only true if creator.
+			else if (groupId == 2) {
+				permitted = user.equals(trimmedOwnerName);
+			}
+			
+			// Otherwise, is custom group, true if user is on group_lists as friend_id
 			else {
-				sqlGroups = "DELETE FROM grouplist WHERE friendtoadd = '" + selUser + "';";
+				// Needs protection from injection attack.
+		        String isPermittedSql = "select * from images where group_id = '" + groupId + "' and friend_id = '" + user + "';";
+	
+				conn = DBHandler.getInstance().getConnection();
+	
+				query = conn.createStatement();
+				results = query.executeQuery(isPermittedSql);
+				if(results != null && results.next()) {
+					permitted = true;
+				}
+				
 			}
 			
-			Statement state = conn.createStatement();
-			state.executeUpdate(sqlGroups);
-			conn.commit();
-			
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/addFriend.html");
-			out.println("<font color=green>Your group has been modified.</font>");
-			rd.include(request, response);
-			
-			DBHandler.getInstance().safeCloseConn(conn);
-			
-	 	} catch (SQLException sqle) {
-	 		DBHandler.getInstance().safeCloseTrans(conn);
-			
-	 		RequestDispatcher rd = getServletContext().getRequestDispatcher("/addFriend.html");
-	 		out.println("<font color=red>Modification of your group failed.  Please try again.</font>");
-	 		rd.include(request, response);
-		} catch (Exception ex) {
-			out.println("<hr>" + ex.getMessage() + "<hr>");
+		}
+		catch (SQLException sqlEx) {
+			System.out.println("<hr>" + sqlEx.getMessage() + "<hr>");
+		}
+		catch (Exception ex) {
+			System.out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
 		
+		DBHandler.getInstance().safeCloseConn(conn);
+		return permitted;
+	}
+	
+	/*
+	 * Executes query about whether a given picture is owned by current user. 
+	 */
+	public boolean isPicOwner(HttpServletRequest request, HttpServletResponse response, int pictureId) {
+		//select the user table from the underlying db and validate the user name and password
+        Statement query = null;
+		ResultSet results = null;
+		
+		String trimmedOwnerName = "";
+		Connection conn = null;
+		boolean isOwner = false;
+		
+		try
+		{
+			String picSql = "select owner_name from images where photo_id = '" + pictureId + "'";
+			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+			
+			conn = DBHandler.getInstance().getConnection();
+			
+			query = conn.createStatement();
+			results = query.executeQuery(picSql);
+			while(results != null && results.next()) {
+				trimmedOwnerName = (results.getString(1)).trim();
+			}
+			
+			isOwner = user.equals(trimmedOwnerName);
+			
+		}
+		catch (SQLException sqlEx) {
+			System.out.println("<hr>" + sqlEx.getMessage() + "<hr>");
+		}
+		catch (Exception ex) {
+			System.out.println("<hr>" + ex.getMessage() + "<hr>");
+		}
+		
+		DBHandler.getInstance().safeCloseConn(conn);
+		return isOwner;
+	}
+	
+	/*
+	 * Executes query about whether a given group is owned by current user. 
+	 */
+	public boolean isGroupOwner(HttpServletRequest request, HttpServletResponse response, int groupId) {
+		// Select the user table from the underlying DB and validate the user name and password
+        Statement query = null;
+		ResultSet results = null;
+		
+		String trimmedOwnerName = "";
+		Connection conn = null;
+		boolean isOwner = false;
+		
+		try
+		{
+			String groupSql = "select user_name from groups where group_id = '" + groupId + "'";
+			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+			
+			conn = DBHandler.getInstance().getConnection();
+			
+			query = conn.createStatement();
+			results = query.executeQuery(groupSql);
+			while(results != null && results.next()) {
+				trimmedOwnerName = (results.getString(1)).trim();
+			}
+			
+			isOwner = user.equals(trimmedOwnerName);
+			
+		}
+		catch (SQLException sqlEx) {
+			System.out.println("<hr>" + sqlEx.getMessage() + "<hr>");
+		}
+		catch (Exception ex) {
+			System.out.println("<hr>" + ex.getMessage() + "<hr>");
+		}
+		
+		DBHandler.getInstance().safeCloseConn(conn);
+		return isOwner;
 	}
 
 }
