@@ -61,6 +61,8 @@ BEGIN
   FROM   dual;
 END;
 
+/
+
 INSERT INTO groups values(0,null,'public', sysdate);
 INSERT INTO groups values(0,null,'private',sysdate);
 
@@ -102,3 +104,5 @@ BEGIN
   INTO   :new.photo_id
   FROM   dual;
 END;
+
+/
