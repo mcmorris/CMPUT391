@@ -1,264 +1,117 @@
-<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1252"> 
-<title>Make Record</title> 
-
-<style>
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-    li {
-      display: inline;
-    }
-  </style>
-</head>
-<body> 
-
-<!--Page to make records.
-    @author  Vincent Phung
-   -->
-
-
-
-
-  <!--Navigation Bar -->
-	<ul>
-		<li><a href="../login/home.jsp">Home</a></li>
-		<li><a href="../login/personal_info.jsp">Change Personal Info</a></li>
-		<li><a href="../search/search.jsp">Search Records</a></li>
-		<% if(cls.equals("a")) { %>
-			<li><a href="../user-management/userManagement.jsp">User Management</a></li>
-			<li><a href="../generate_reports/generate_report.jsp">Generate Reports</a></li>
-			<li><a href="../data_analysis/dataAnalysis.jsp">Data Analysis</a></li>
-		<% } else if(cls.equals("r")) { %>
-			<li><a href="make_record.jsp">Upload Images</a></li>
-		<% } %>
-		<li><a href="../docs/user-manual/Uploading-Images.html#Uploading-Images">Help</a></li>
-		<li><a href="../login/logout.jsp">Logout</a></li>
-	</ul>
-
-
-<h4>Create Radiologist Record!
-</h4>
-<p>
-</p>
-Enter relevant fields:
-<form name="Create_rad_record" action="/CMPUT391Project/upload/make_record.jsp?rid=${param.rid}">
-<table>
-  <tbody><tr>
-    <th>Patient id</th> 
-    <td><input name="patient_id" type="number"></td>
-  </tr>
-  <tr>
-    <th>Doctor Id</th>
-    <td><input name="doctor_id" type="number"></td>
-  </tr>
-  <tr>
-    <th>Test Type</th>
-    <td><input name="test_type" type="text"></td>
-  </tr>
-  <tr>
-    <th>Prescribing Date</th>
-    <td><input name="prescribing_date" type="date"></td>
-  </tr>
-  <tr>
-    <th>Test Date</th>
-    <td><input name="test_date" type="date"></td>
-  </tr>
-  <tr>
-    <th>Diagnosis</th>
-    <td><input name="diagnosis" type="text"></td>
-  </tr>
-  <tr>
-    <th>Description</th>
-     <td><textarea name="description" cols=40 rows=6></textarea></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="CENTER"><input name="create_record" value="Create" type="submit"></td>
-  </tr>
-</tbody></table>
-</form>
-
-<%@ page import="java.sql.*" %>
-<%@ page import="javax.sql.*" %>
-<%@ page import="javax.naming.*" %>
-<%@ page import="java.io.IOException" %>
-<%@ page import="java.text.DateFormat" %>
-<%@ page import="java.util.Date" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-
-
-  
-  <%!
-    /**
-     * Get and display personal info as html table rows.
-     */
-    void form(Integer person_id,HttpServletRequest request, Connection conn, JspWriter out) throws SQLException, IOException
-    {
-    
-     if (request.getParameter("create_record") != null)
-     {
-      try{
-        if(!
-        (request.getParameter("patient_id").equals("") || 
-        request.getParameter("doctor_id").equals("") || 
-        request.getParameter("test_type").equals("") || 
-        request.getParameter("prescribing_date").equals("") || 
-        request.getParameter("test_date").equals("") || 
-        request.getParameter("diagnosis").equals("") || 
-        request.getParameter("description").equals(""))
-        )
-        {
-            conn.setAutoCommit(false);
-            Statement stmt2 = conn.createStatement();
-            ResultSet rset2 = stmt2.executeQuery("select record_seq.NEXTVAL from dual");
-            int nextItemId;
-            if(rset2.next())
-            {
-              nextItemId = rset2.getInt(1);
-            }
-            else    
-            {
-                conn.close();
-                out.println("<b>Error: item_seq does not exist</b>");
-                return;       
-            }
-            // check the fields tho
-            int patient_id = Integer.parseInt(request.getParameter("patient_id"));
-            int doctor_id = Integer.parseInt(request.getParameter("doctor_id"));
-            int rad_id = person_id;
-            String test_type = request.getParameter("test_type");
-            String sprescribing_date = request.getParameter("prescribing_date");
-            String stest_date = request.getParameter("test_date");
-            String diagnosis = request.getParameter("diagnosis");
-            String description = request.getParameter("description");
-            // date stuff
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date prescribing_date = dateFormat.parse(sprescribing_date);
-            Date test_date = dateFormat.parse(stest_date);
-            PreparedStatement addRecord = conn.prepareStatement("insert into radiology_record values(?, ?, ? , ? , ? , ? , ?, ? , ?)");
-            addRecord.setInt(1, nextItemId);
-            addRecord.setInt(2, patient_id);
-            addRecord.setInt(3, doctor_id);
-            addRecord.setInt(4, rad_id);
-            addRecord.setString(5, test_type);
-            
-            addRecord.setDate(6, new java.sql.Date(prescribing_date.getTime()));
-            addRecord.setDate(7,  new java.sql.Date(test_date.getTime()));
-            addRecord.setString(8, diagnosis);
-            addRecord.setString(9, description);
-            addRecord.executeUpdate();
-            stmt2.executeUpdate("commit");
-            stmt2.close();
-            addRecord.close();
-            //enable the auto commit mode
-            
+<!-- Specifies a form for uploading images to the database -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Images to Online Storage</title>
+    <%@ page import="java.util.*" %>
+    <%@ page import="java.sql.*" %>
+    <%@include file="../util/dbLogin.jsp"%>
+    <%
+        // Encode the successful redirect
+        String encodeUpload = response.encodeURL("/proj1/uploading/UploadImage");
+        String username = String.valueOf(session.getAttribute("username"));
+        Statement stmt = conn.createStatement();
+        ResultSet rset = null;
+        String sql = "";
+        
+        // Initialize the list of group names and IDs, and add the defaults (public, private)
+        ArrayList<String> group_names = new ArrayList<String>();
+        ArrayList<String> group_ids = new ArrayList<String>();
+        group_ids.add("1");
+        group_ids.add("2");
+        group_names.add("public");
+        group_names.add("private");
+        // Have to separate the following two to handle the case where the group is empty
+        // Get the list of group ids where the user is the group owner
+        sql = "select group_id from groups where user_name='" + username + "'";
+        try {
+            rset = stmt.executeQuery(sql);
+            while (rset.next())
+                group_ids.add(rset.getString("group_id"));
+        } catch (Exception ex) {
+            out.println("<hr>" + ex.getMessage() + "<hr>");
         }
-      }
-      catch (Exception ex)
-      {
-        out.println("<hr>" + ex.getMessage() + "<hr>");
-      }
-     }
-   }
-  
-    void displayInfo(Integer person_id, Connection conn, JspWriter out) throws SQLException, IOException{
-      // select person info for user from table
-      Statement stmt = null;
-      ResultSet rset = null;
-      String sql = "SELECT record_id, patient_id, doctor_id, test_type, prescribing_date ,test_date , diagnosis, description " +
-        "FROM radiology_record " +
-        "WHERE radiologist_id = "+person_id; //hard code for now
-      try{
-        stmt = conn.createStatement();
-        rset = stmt.executeQuery(sql);
-      }
-      catch(Exception ex){
-        out.println("<hr>" + ex.getMessage() + "<hr>");
-      }
-      // Display personal info in table
-      if (rset != null) {
-        out.println("<hr>");
-        out.println("<h4>Current Records</h4>");
-        out.println("<table>");
-          out.println("<table border=1>");
-        out.println("<TR>");
-        out.println("<th>Record Id (Click on Name to upload)</th>");
-        out.println("<th>Patient Id</th>");
-        out.println("<th>Doctor Id</th>");
-        out.println("<th>Test Type</th>");
-        out.println("<th>Prescribing Date</th>");
-        out.println("<th>Test Date</th>");
-        out.println("<th>Diagnosis</th>");
-        out.println("<th>Description</th>");
-        out.println("</TR>");
-        // print the stuff now
-        while(rset.next()) { 
-          out.println("<tr>");
-          out.println("<td>"); 
-          out.print("<li><a href=\"../upload/upload_image.jsp");
-          out.print("?rid=");
-          out.print(rset.getInt(1));
-          out.print("\">");
-          out.print(rset.getInt(1));
-          out.println("</a></li>");
-          out.println("</td>");
-          out.println("<td>"); 
-          out.println(rset.getInt(2)); 
-          out.println("</td>");
-          out.println("<td>"); 
-          out.println(rset.getInt(3)); 
-          out.println("</td>");
-          out.println("<td>"); 
-          out.println(rset.getString(4)); 
-          out.println("</td>");
-          out.println("<td>"); 
-          out.println(rset.getDate(5)); 
-          out.println("</td>");
-          out.println("<td>"); 
-          out.println(rset.getDate(6)); 
-          out.println("</td>");
-          out.println("<td>"); 
-          out.println(rset.getString(7)); 
-          out.println("</td>");
-          out.println("<td>"); 
-          out.println(rset.getString(8)); 
-          out.println("</td>");
-          out.println("</tr>"); 
-        } 
-        out.println("</table>");
-      }
-    }
-    
-  %>
-
-  <%
-    // Main point of execution
-    // Display personal info for logged in user.
-    Connection conn = null;
-    try{
-      //establish the connection 
-      Context initContext = new InitialContext();
-      Context envContext  = (Context)initContext.lookup("java:/comp/env");
-      DataSource ds = (DataSource)envContext.lookup("jdbc/myoracle");
-      conn = ds.getConnection();
-      conn.setAutoCommit(false);
-    }
-    catch(Exception ex){
-      out.println("<hr>" + ex.getMessage() + "<hr>");
-    }
-    displayInfo(person_id, conn, out);
-    form(person_id,request , conn , out);
-    try{
-      conn.close();
-    }
-    catch(Exception ex){
-      out.println("<hr>" + ex.getMessage() + "<hr>");
-    }
-    
-  %>
-
-
-</body></html>
+        // Get the list of group ids where the user is a friend
+        sql = "select group_id from group_lists where friend_id='" + username + "'";
+        try {
+            rset = stmt.executeQuery(sql);
+            while (rset.next())
+                group_ids.add(rset.getString("group_id"));
+        } catch (Exception ex) {
+            out.println("<hr>" + ex.getMessage() + "<hr>");
+        }
+        
+        // Convert the list of group ids into group names
+        for (int i = 2; i < group_ids.size(); i++) {
+            sql = "select group_name from groups where group_id='" + group_ids.get(i) + "'";
+            rset = stmt.executeQuery(sql);
+            while (rset.next())
+                group_names.add(rset.getString("GROUP_NAME"));
+        }
+    %>
+    <%@include file="../util/dbLogout.jsp"%>
+    <link rel="stylesheet" type="text/css" href="/proj1/util/mystyle.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/resources/demos/style.css" />
+    <script>
+        $(function() {
+            $( "#time" ).datepicker({
+                defaultDate: "+1w",
+                changeMonth: true,
+                numberOfMonths: 1,
+            });
+        });
+    </script>
+</head>
+<body>
+<%@include file="../util/addHeader.jsp"%>
+    <div id="container">
+        <div id="subContainer" style="width:450px">
+            <p class="homePage">Go back to <A class="homePage" href=<%=encodeHomePage%>>Home Page</a></p>
+            <Fieldset>
+                <legend>Upload Image(s)</legend>
+                Please input or select the path of the image(s)
+                <form name="upload-image" method="POST" enctype="multipart/form-data" action=<%=encodeUpload%>>
+                <table>
+                    <tr>
+                        <th>File path(s): </th>
+                        <td><input name="file-path" type="file" size="30" multiple></input></td>
+                    </tr>
+                    <tr>
+                        <th>Description: </th>
+                        <td><input name="description" type="textfield" value=""></td>
+                    </tr>
+                    <tr>
+                        <th>Place: </th>
+                        <td><input name="place" type="textfield" value=""></td>
+                    </tr>
+                    <tr>
+                        <th>Subject: </th>
+                        <td><input name="subject" type="textfield" value=""></td>
+                    </tr>
+                    <tr>
+                        <th>Security: </th>
+                        <td><select name="security">
+                        <% // For each valid group_id and group_name for the user,
+                           // add the group to the select menu
+                            for (int i = 0; i < group_ids.size(); i += 1) { %>
+                                <option value='<%=group_ids.get(i)%>'><%=group_names.get(i)%></option>
+                            <%}%>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <th>Date: </th>
+                        <td><input id="time" name="time" type="textfield" value=""></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" ID="buttonstyle" name=".submit" value="Upload"></td>
+                    </tr>
+                </table>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+</body>
+</html>

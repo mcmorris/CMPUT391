@@ -20,18 +20,7 @@
     @author  Vincent Phung
    -->
 
-  <%
-		// Return user to login page if session expired. Return to home if not admin.
-		Integer person_id = (Integer) session.getAttribute("person_id");
-		String cls = "";
-		if(person_id == null) 
-			response.sendRedirect("../login/login.jsp");
-		else {
-			cls = (String) session.getAttribute("class");
-			if(!cls.equals("r"))
-				response.sendRedirect("../login/home.jsp");
-		}
-	%>
+
 
 
   <!--Navigation Bar -->

@@ -11,9 +11,9 @@
            String photo_id = request.getParameter("id");
            String username = String.valueOf(session.getAttribute("username"));
            // Outgoing link encodes
-           String encodeEdit = response.encodeURL("/proj1/display/EditData");
-           String encodePic = response.encodeURL("/proj1/display/pictureBrowse.jsp");
-           String imgNotFoundEncode = response.encodeURL("/proj1/error/imgNotFound.jsp");
+           String encodeEdit = response.encodeURL("/proj1/EditData");
+           String encodePic = response.encodeURL("/proj1/pictureBrowse.jsp");
+
         %>
         <%@ page import="java.sql.*, java.text.*, java.util.*" %>
         <%@include file="../util/dbLogin.jsp"%>
@@ -65,7 +65,7 @@
                group_id = rset.getString("PERMITTED");
            }
            else // User manually tried to access an image that doesn't exist
-               response.sendRedirect(imgNotFoundEncode);
+                out.println("error")
            // Translate the group_id to a group_name for display
            try { 
                Statement permitted_stmt = conn.createStatement();
@@ -196,8 +196,8 @@
             </div>
            <%
            if(username.equals(owner_name)) { %>
-               <button id=edit-info>Edit Photo Information</button>
-               <button id="buttonstyle" onclick="deleteImage()">Delete Photo</button>
+               <!--<button id=edit-info>Edit Photo Information</button>
+               <button id="buttonstyle" onclick="deleteImage()">Delete Photo</button>-->
          <% } %>
             <form action=<%=encodePic%>>
                 <input type='submit' ID="buttonstyle" value='Return to Pictures'>
@@ -205,9 +205,9 @@
         </center>
 
         <!-- HTML for the Edit-Data form -->
-        <div id="edit-form" title="Edit Photo Information">
+        <!--<div id="edit-form" title="Edit Photo Information">
             <p class="intro">Edit any subset of the fields and click 'submit'.</p>
-            <form method="POST" action=<%=encodeEdit%>>
+            <form method="POST" action=<%=encodeEdit%>-->
                 <fieldset>
                     <TABLE>
                        <TR VALIGN=TOP ALIGN=LEFT>

@@ -1,4 +1,5 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+
 <html>
 <head> 
     <title>Upload Images to Online Storage</title>
@@ -132,15 +133,14 @@
 			<TR>
 				<TD><B><I><font color=Maroon>Share with: </font></I></B></TD>
 				<TD>
-					<SELECT NAME='sharedwith'>
+					<SELECT NAME='PERMITTED'>
 					<%
-						sql="SELECT * FROM persons p WHERE p.person_id=ANY(SELECT u.person_id FROM users u WHERE u.class='d')";
-						resSet=s.executeQuery(sql);
-						while(resSet.next()){
-							Integer id=resSet.getInt("person_id");
-							String fname=resSet.getString("first_name");
-							String lname=resSet.getString("last_name");
-							out.println("<OPTION VALUE='"+id+"' SELECTED> "+fname+" "+lname+" ID: "+id+" </OPTION>");
+						sql="SELECT group_name FROM groups g WHERE g.group_id=ANY"(SELECT gl.group_id FROM group_lists gl WHERE gl.friend_id = '" + user + "')";
+						results.executeQuery(sql);
+						while(results.next()){
+							String group_name=results.getString("group_name");
+						
+							out.println("<OPTION VALUE='"+group_name+"' SELECTED> "+group_name+"  </OPTION>");
 						}
 						con.close();
 					%>
@@ -156,21 +156,24 @@
 			</TR>-->
 	
 			<TR>
-				<TD><B><I><font color=Maroon>Date photo was taken: 
+				<TD><B><I><font color=Maroon>Date: 
 								(MM-DD-YYYY): </font></I></B></TD>
 				<TD><p>
-						<INPUT TYPE="text" class="datepicker" NAME="tDate" VALUE="" />
+						<INPUT TYPE="text" class="date" NAME="DATE" VALUE="" />
 					</p></TD>
 			</TR>
 			<TR>
 				<TD><B><I><font color=Maroon>Location:  </font></I></B></TD>
-				<TD><INPUT TYPE="text" NAME="diagnosis" VALUE=""></TD>
+				<TD><INPUT TYPE="text" NAME="LOCATION" VALUE=""></TD>
 			</TR>
 			<TR>
 				<TD><B><I><font color=Maroon>Subject: </font></I></B></TD>
-				<TD><INPUT TYPE="text" NAME="description" VALUE=""></TD>
+				<TD><INPUT TYPE="text" NAME="SUBJECT" VALUE=""></TD>
 			</TR>
-		
+			<TR>
+				<TD><B><I><font color=Maroon>Description: </font></I></B></TD>
+				<TD><INPUT TYPE="text" NAME="DESCRIPTION" VALUE=""></TD>
+			</TR>
   <tr>
     <th>File path: </th>
     <td><input name="file-path" type="file" size="30" ></input></td>
