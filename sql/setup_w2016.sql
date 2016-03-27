@@ -4,7 +4,12 @@
  *              Winter, 2016
  *  Author:     Prof. Li-Yan Yuan
  */
- /* Modified by Michael Morris to support sequences for auto-numbering ID cols. */
+
+DROP SEQUENCE images_seq;
+DROP SEQUENCE groups_seq;
+DROP TRIGGER images_ins;
+DROP TRIGGER groups_ins;
+
 DROP TABLE images;
 DROP TABLE group_lists;
 DROP TABLE groups;
