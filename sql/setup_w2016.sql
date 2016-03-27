@@ -4,6 +4,7 @@
  *              Winter, 2016
  *  Author:     Prof. Li-Yan Yuan
  */
+ /* Modified by Michael Morris to support sequences for auto-numbering ID cols. */
 DROP TABLE images;
 DROP TABLE group_lists;
 DROP TABLE groups;
@@ -41,8 +42,22 @@ CREATE TABLE groups (
    FOREIGN KEY(user_name) REFERENCES users
 );
 
-INSERT INTO groups values(1,null,'public', sysdate);
-INSERT INTO groups values(2,null,'private',sysdate);
+CREATE SEQUENCE groups_seq
+  START WITH 1
+  INCREMENT BY 1
+  CACHE 100;
+
+CREATE OR REPLACE TRIGGER groups_ins 
+BEFORE INSERT ON groups 
+FOR EACH ROW
+BEGIN
+  SELECT groups_seq.NEXTVAL
+  INTO   :new.group_id
+  FROM   dual;
+END;
+
+INSERT INTO groups values(0,null,'public', sysdate);
+INSERT INTO groups values(0,null,'private',sysdate);
 
 CREATE TABLE group_lists (
    group_id    int,
