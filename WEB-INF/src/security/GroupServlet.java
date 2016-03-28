@@ -69,7 +69,7 @@ public class GroupServlet extends HttpServlet {
 			DBHandler.getInstance().safeCloseConn(conn);
 		
 		} catch (SQLException sqle) {
-			DBHandler.getInstance().safeCloseTrans(conn);
+			DBHandler.getInstance().safeCloseConn(conn);
 		} catch (Exception ex) {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
