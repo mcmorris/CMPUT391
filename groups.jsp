@@ -17,6 +17,12 @@
 		conn = DBHandler.getInstance().getConnection();
 			 		
 		String user = CredentialHandler.getInstance().getSessionUserName(request);
+		if(user.isEmpty() == true)
+		{
+%>
+<jsp:forward page="..login.html" />
+<%
+		}
 		
 		Groups grps = new Groups();
 		results = grps.getOwnedGroups(conn, user);
