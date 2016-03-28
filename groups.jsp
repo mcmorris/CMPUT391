@@ -9,18 +9,19 @@
 
 <BODY>
 
-<% 
-	out.println("<UL>");
-	out.println("<LI><a href=""login.html"">Logout</a></LI>");
-	out.println("<LI><a href=""profile.html"">Profile</a></LI>");
-	out.println("<LI><a href=""groups.jsp"">Privacy</a></LI>");
-	out.println("<LI><a href=""upload.html"">Share</a></LI>");
-	out.println("<LI><a href=""display.html"">Browse</a></LI>");
-	out.println("<LI><a href=""search.html"">Search</a></LI>");
-	out.println("<LI><a href=""analytics.html"">Analytics</a></LI>");
-	out.println("</UL>");
+<UL>
+	<LI><a href="login.html">Logout</a></LI>
+	<LI><a href="profile.html>Profile</a></LI>
+	<LI><a href="groups.jsp">Privacy</a></LI>
+	<LI><a href="upload.html">Share</a></LI>
+	<LI><a href="display.html">Browse</a></LI>
+	<LI><a href="search.html">Search</a></LI>
+	<LI><a href="analytics.html">Analytics</a></LI>
+</UL>
 
-	out.println("<h1>User Groups</h1>");
+<h1>User Groups</h1>
+
+<% 
 	try
 	{
 		//establish connection to the underlying database
@@ -57,7 +58,7 @@
 				out.println("</td>");
 				out.println("</tr>");
 			} while (rs.next());
-			out.println("<table>");
+			out.println("</table>");
 		}
 	
 	} catch(SqlException sqlEx){
@@ -66,14 +67,15 @@
 		out.println("<hr>" + ex.getMessage() + "<hr>");
 	}
 	
-	out.println("<FORM NAME=""GroupServlet"" ACTION=""groupservlet"" METHOD=""post"">");
-	out.println("<INPUT TYPE=""text"" NAME=""group"" VALUE=""group name""><br>");
-	out.println("<INPUT TYPE=""radio"" name=""mode"" value=""add"">Create<br>");
-  	out.println("<INPUT TYPE=""radio"" name=""mode"" value=""edit"">Modify<br>");
-  	out.println("<INPUT TYPE=""submit"" NAME="".submit"" VALUE=""Submit""><br>");
-	out.println("</FORM>");
 	DBHandler.getInstance().safeCloseConn(conn);
 %>
+
+<FORM NAME="GroupServlet" ACTION="groupservlet" METHOD="post">
+<INPUT TYPE="text" NAME="group" VALUE="group name"><br>
+<INPUT TYPE="radio" name="mode" value="add">Create<br>
+<INPUT TYPE="radio" name="mode" value="edit">Modify<br>
+<INPUT TYPE="submit" NAME="".submit" VALUE="Submit"><br>
+</FORM>
 
 </BODY>
 </HTML>
