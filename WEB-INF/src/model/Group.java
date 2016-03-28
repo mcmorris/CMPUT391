@@ -28,8 +28,8 @@ public class Group {
 		
 		// Real world, would check to ensure a group with this name for this user does not already exist, and that group is not named "private" or "public".  Not included here, not in assignment specs.
 		PreparedStatement pstmt = conn.prepareStatement("INSERT INTO group values(0, ?, ?, SYSDATE);");
-    pstmt.setString(1, gName);
-    pstmt.setString(2, curUser);
+		pstmt.setString(1, gName);
+		pstmt.setString(2, curUser);
     
 		pstmt.executeUpdate();
   }
@@ -41,6 +41,20 @@ public class Group {
     if (conn != null) {
       PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM groups WHERE group_id = ?;");
       pstmt.setInt(1, groupId);
+      
+      results = pstmt.executeQuery();
+    }
+    
+    return results;
+  }
+  
+    // Get a group from groups.
+  public ResultSet getByName(Connection conn, String name) {
+    ResultSet results = null;
+    
+    if (conn != null) {
+      PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM groups WHERE group_name = ?;");
+      pstmt.setString(1, name);
       
       results = pstmt.executeQuery();
     }
