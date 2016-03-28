@@ -15,7 +15,6 @@
 	{
 		//establish connection to the underlying database
 		conn = DBHandler.getInstance().getConnection();
-		conn.setAutoCommit(false);
 			 		
 		String user = CredentialHandler.getInstance().getSessionUserName(request);
 		
