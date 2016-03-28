@@ -11,7 +11,6 @@
 
 <% 
 	out.println("<h1>User Groups</h1>");
-    
 	try
 	{
 		//establish connection to the underlying database
@@ -19,7 +18,7 @@
 		conn.setAutoCommit(false);
 			 		
 		String user = CredentialHandler.getInstance().getSessionUserName(request);
-    
+		
 		Groups grps = new Groups();
 		results = grps.getOwnedGroups(conn, user);
       
@@ -31,15 +30,15 @@
 				out.println("<tr>");
 				// Get data from the current row and use it
 				out.println("<td>");
-				out.println(results.getInt("group_id"));
+				out.println(results.getInt(1));
 				out.println("</td>");
-				out.println(results.getString("user_name"));
-				out.println("</td>");
-				out.println("<td>");
-				out.println(results.getString("group_name"));
+				out.println(results.getString(2));
 				out.println("</td>");
 				out.println("<td>");
-				out.println(results.getString("date_created"));
+				out.println(results.getString(3));
+				out.println("</td>");
+				out.println("<td>");
+				out.println(results.getString(4));
 				out.println("</td>");
         
 				out.println("</tr>");
