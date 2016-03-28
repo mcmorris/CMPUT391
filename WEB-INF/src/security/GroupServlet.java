@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import session.CredentialHandler;
 import session.DBHandler;
+import model.Group;
 
 /**
  * @author mcmorris
