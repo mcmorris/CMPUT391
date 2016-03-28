@@ -20,50 +20,64 @@ import session.DBHandler;
  * @author mcmorris
  *
  */
-public class CreateGroupServlet extends HttpServlet {
+public class GroupServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// get request parameters for group name
-	 	String gName = request.getParameter("GNAME");
-		boolean valid = false;		
-    
+		String gName = request.getParameter("group");
+		String mode = request.getParameter("mode");
+		boolean valid = false;
+		
 		PrintWriter out = response.getWriter();
 		Connection conn = null;
+		int groupId = -1;
 		
 		try {
-			
 			//establish connection to the underlying database
 			conn = DBHandler.getInstance().getConnection();
+			String user = CredentialHandler.getInstance().getSessionUserName(request);
+			
 			valid = isValidGroup(gName);
-			if(valid) {
-				conn.setAutoCommit(false);
-
-				String user = CredentialHandler.getInstance().getSessionUserName(request, response);
-				String sqlGroups = "INSERT INTO group values(0, '" + user + "', '" + gName + "', SYSDATE);";
+			if(valid) 
+			{
+				Group grp = new Group();
+				if (mode == "add") {
+					grp.add(conn, gName, user);
+					
+					RequestDispatcher rd = getServletContext().getRequestDispatcher("/groups.jsp");
+					out.println("<font color=green>Your new group has been created.</font>");
+					rd.include(request, response);
+				}
+				else if (mode == "update")
+				{
+					ResultSet results = grp.getByName(conn, gName);
+					if (results.next()) {                            // Then there are rows.
+						gId = results.getInt(1);
+					}
+					
+					// Only modify valid group Ids.
+					if (gId > 0) {
+						RequestDispatcher rd = getServletContext().getRequestDispatcher("/friend.jsp?gid=" + gId);
+						rd.include(request, response);
+					}
+				}
 				
-				Statement state = conn.createStatement();
-				state.executeUpdate(sqlGroups);
-				conn.commit();
-				
-	            		RequestDispatcher rd = getServletContext().getRequestDispatcher("/addFriend.html");
-	            		out.println("<font color=green>Your group has been processed.  Please add friends to your groups now.</font>");
-	            		rd.include(request, response);
 			}
 			
 			DBHandler.getInstance().safeCloseConn(conn);
-
+		
 		} catch (SQLException sqle) {
 			DBHandler.getInstance().safeCloseTrans(conn);
 		} catch (Exception ex) {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
 		
-	    	if (valid == false) {
-			 RequestDispatcher rd = getServletContext().getRequestDispatcher("/addGroup.html");
-		      	out.println("<font color=red>This group cannot be added.  Please try a different group.</font>");
-		      	rd.include(request, response);
-	    	}
+		if (valid == false) {
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/addGroup.html");
+			out.println("<font color=red>This group cannot be added.  Please try a different group name.</font>");
+			rd.include(request, response);
+		}
 		
 	}
 	
