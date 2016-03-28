@@ -10,6 +10,16 @@
 <BODY>
 
 <% 
+	out.println("<UL>");
+	out.println("<LI><a href=""login.html"">Logout</a></LI>");
+	out.println("<LI><a href=""profile.html"">Profile</a></LI>");
+	out.println("<LI><a href=""groups.jsp"">Privacy</a></LI>");
+	out.println("<LI><a href=""upload.html"">Share</a></LI>");
+	out.println("<LI><a href=""display.html"">Browse</a></LI>");
+	out.println("<LI><a href=""search.html"">Search</a></LI>");
+	out.println("<LI><a href=""analytics.html"">Analytics</a></LI>");
+	out.println("</UL>");
+
 	out.println("<h1>User Groups</h1>");
 	try
 	{
@@ -20,15 +30,15 @@
 		if(user.isEmpty() == true)
 		{
 %>
-<jsp:forward page="..login.html" />
+<jsp:forward page="login.html" />
 <%
 		}
 		
 		Groups grps = new Groups();
 		results = grps.getOwnedGroups(conn, user);
-      
+      		
 		if (!rs.next()) {                            // Then there are no rows.
-			System.out.println("<p>Not a member of any user groups.</p>");
+			System.out.println("<p>You do not own any groups.  Why not create one?</p>");
 		} else {
 			out.println("<table>");
 			do {
@@ -45,7 +55,6 @@
 				out.println("<td>");
 				out.println(results.getString(4));
 				out.println("</td>");
-        
 				out.println("</tr>");
 			} while (rs.next());
 			out.println("<table>");
@@ -57,8 +66,13 @@
 		out.println("<hr>" + ex.getMessage() + "<hr>");
 	}
 	
+	out.println("<FORM NAME=""GroupServlet"" ACTION=""groupservlet"" METHOD=""post"">");
+	out.println("<INPUT TYPE=""text"" NAME=""group"" VALUE=""group name""><br>");
+	out.println("<INPUT TYPE=""radio"" name=""mode"" value=""add"">Create<br>");
+  	out.println("<INPUT TYPE=""radio"" name=""mode"" value=""edit"">Modify<br>");
+  	out.println("<INPUT TYPE=""submit"" NAME="".submit"" VALUE=""Submit""><br>");
+	out.println("</FORM>");
 	DBHandler.getInstance().safeCloseConn(conn);
-	
 %>
 
 </BODY>
