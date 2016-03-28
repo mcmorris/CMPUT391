@@ -8,7 +8,6 @@ import java.sql.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -31,7 +30,7 @@ public class CredentialHandler {
 	/*
 	 * Create a new session with user from request
 	 */
-	protected void createSession(HttpServletRequest request, HttpServletResponse response, int timeoutMin) {
+	protected void createSession(HttpServletRequest request, int timeoutMin) {
 		String user = request.getParameter("USERID");
 
 		HttpSession session = request.getSession();
@@ -99,10 +98,9 @@ public class CredentialHandler {
 	/*
 	 * Checks user has established session, otherwise kicks back to login page.
 	 */
-	public boolean credentialCheck(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public boolean credentialCheck(HttpServletRequest request) throws IOException {
 	        HttpSession session = request.getSession(false);
 	    	if(session.getAttribute("user") == null) {
-	    	    response.sendRedirect("login.html");
 	    	    return false;
 	    	}
 	    	
@@ -112,9 +110,9 @@ public class CredentialHandler {
 	/*
 	 * Gets user name of current session user.
 	 */
-	public String getSessionUserName(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String getSessionUserName(HttpServletRequest request) throws IOException {
 		String userName = null;
-		if (credentialCheck(request, response) == true) {
+		if (credentialCheck(request) == true) {
 			HttpSession session = request.getSession(false);
 			userName = (String) session.getAttribute("user");
 			
@@ -130,5 +128,4 @@ public class CredentialHandler {
 		return userName;
 	}
 	
-
 }
