@@ -16,10 +16,10 @@ import javax.servlet.http.HttpSession;
  */
 public class CredentialHandler {
 	private static CredentialHandler instance = null;
-
 	protected CredentialHandler() {
 		// Exists only to defeat instantiation.
 	}
+	
 	public static CredentialHandler getInstance() {
 		if(instance == null) {
 			instance = new CredentialHandler();
