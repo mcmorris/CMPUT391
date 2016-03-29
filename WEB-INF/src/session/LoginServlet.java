@@ -25,27 +25,17 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		boolean valid = false;
-		
-		Connection conn = null;
-		User u = new User();
-		
+
 		try {
-			//establish connection to the underlying database
-			conn = DBHandler.getInstance().getConnection();
-			conn.setAutoCommit(false);
-			
-			valid = u.isValidLogin(conn, user, pwd);
+			valid = CredentialHandler.getInstance().isValidLogin(user, pwd);
 			if(valid) {
 				CredentialHandler.getInstance().createSession(request, response, 30);
 				String encodedURL = response.encodeRedirectURL("LoginSuccess.jsp");
 				response.sendRedirect(encodedURL);
 			}
-			
-			DBHandler.getInstance().safeCloseConn(conn);
 		}
 		catch(Exception ex) {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
-			DBHandler.getInstance().safeCloseConn(conn);
 		}
 		
 		if (valid == false) {
