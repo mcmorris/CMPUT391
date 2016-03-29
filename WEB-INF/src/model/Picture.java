@@ -72,14 +72,11 @@ public class Picture {
 		OutputStream outstream = myPic.getBinaryOutputStream();
 		ImageIO.write(thumbNail, "jpg", outstream);
 		
-		
-
-
-	    //Write the image to the blob object
-	    OutputStream outstream = myblob.getBinaryOutputStream();
-	    ImageIO.write(thumbNail, "jpg", outstream);
+		instream.close();
+	    outstream.close();
 	    
-		
+	    // FIXME: I feel like BufferedImage img hasn't been written to DB.  What's up with that?
+	    
 		// For batch updates, client is not going to be able to set subject, place, timing, description.  Set to defaults.
 	}
   
