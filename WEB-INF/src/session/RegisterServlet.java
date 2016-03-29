@@ -45,10 +45,10 @@ public class RegisterServlet extends HttpServlet {
 				rd.include(request, response);
 			}
 			
-			DBHandler.getInstance().safeCloseConn(conn);
+			DBHandler.getInstance().safeCloseTrans(conn);
 		
 		} catch (SQLException sqle) {
-			DBHandler.getInstance().safeCloseTrans(conn);
+			DBHandler.getInstance().safeCloseConn(conn);
 		} catch (Exception ex) {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
