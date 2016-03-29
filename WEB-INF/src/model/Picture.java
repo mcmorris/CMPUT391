@@ -55,16 +55,20 @@ public class Picture {
 		PreparedStatement pstmt2 = conn.prepareStatement("SELECT images_seq.CURRVAL FROM dual;");
 		ResultSet results = pstmt2.executeQuery(cmd);
 		results.next();
-		BLOB myPic = ((OracleResultSet)results).getBLOB(7);
 		
-		//Write the image to the blob object
-		OutputStream outstream = myPic.getBinaryOutputStream();
+		BLOB myThumb = ((OracleResultSet)results).getBLOB(7);
+		BLOB myPic = ((OracleResultSet)results).getBLOB(8);
+		
+		//Write the images to blob objects
+		OutputStream outstream = myThumb.getBinaryOutputStream();
 		ImageIO.write(thumbNail, "jpg", outstream);
-		
-		instream.close();
 		outstream.close();
 		
-		// FIXME: I feel like BufferedImage img hasn't been written to DB.  What's up with that?
+		OutputStream outstream2 = myPic.getBinaryOutputStream();
+		ImageIO.write(img, "jpg", outstream2);
+		outstream2.close();
+		
+		instream.close();
 		
 		// File added to DB, delete from temp file folder.
 		fileItem.delete();
