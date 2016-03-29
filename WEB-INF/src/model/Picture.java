@@ -41,18 +41,22 @@ public class Picture {
 		upload.setSizeMax(maxRequestSize);
 		
 		// Process the uploaded items
+		List /* FileItem */ items = upload.parseRequest(request);
 		Iterator iter = items.iterator();
 		FileItem fileItem;
 		File fout;
 		
 		while (iter.hasNext()) {
-			UPLOAD FILE
-			
-			// Add uploaded image to DB
-			add(conn, request, item);
-			
-			// File added to DB, delete from temp file folder.
-			fileItem.delete();
+			// Form Fields are not images and should not be uploaded as such.
+			if (!fileItem.isFormField()) {
+				UPLOAD FILE
+				
+				// Add uploaded image to DB
+				add(conn, request, item);
+				
+				// File added to DB, delete from temp file folder.
+				fileItem.delete();
+			}
 		} // while
   	}
   
