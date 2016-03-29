@@ -21,41 +21,32 @@ public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// get request parameters for userID and password
-	 	String user = request.getParameter("USERID");
-	 	String pwd = request.getParameter("PASSWD");
-	 	String fName = request.getParameter("FNAME");
-	 	String lName = request.getParameter("LNAME");
-	 	String address = request.getParameter("ADDRESS");
-	 	String email = request.getParameter("EMAIL");
-	 	String phone = request.getParameter("PHONE");
-	 	
 		PrintWriter out = response.getWriter();
 		Connection conn = null;
 		boolean valid = false;
 		
 		try {
-			
 			//establish connection to the underlying database
 			conn = DBHandler.getInstance().getConnection();
-			valid = isValidRegistration(user, pwd);
+			conn.setAutoCommit(false);
+			
+			User u = new User();
+			u.add(conn, request);
+			
+			valid = u.isAvailable(user, pwd);
 			if(valid) {
-				conn.setAutoCommit(false);
-				String sqlUsers = "INSERT INTO users values('" + user + "', '" + pwd + "', SYSDATE);";
-				String sqlPersons = "INSERT INTO persons values('" + user + "', '" + fName + "', '" + lName + "', '" + address + "', '" + email + "', '" + phone + "');";
-				
-				Statement state = conn.createStatement();
-				state.executeUpdate(sqlUsers);
-				state.executeUpdate(sqlPersons);
+				Person p = new Person();
+				u.add(conn, request);
+				p.add(conn, request);
 				conn.commit();
 				
-			        RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
-			        out.println("<font color=green>Your registration has been processed.  Please login now.</font>");
-			        rd.include(request, response);
+				RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+				out.println("<font color=green>Your registration has been processed.  Please login now.</font>");
+				rd.include(request, response);
 			}
 			
 			DBHandler.getInstance().safeCloseConn(conn);
-
+		
 		} catch (SQLException sqle) {
 			DBHandler.getInstance().safeCloseTrans(conn);
 		} catch (Exception ex) {
@@ -69,22 +60,5 @@ public class RegisterServlet extends HttpServlet {
 	        }
 	        
     	}
-	
-	/*
-	 * Check username/password do not match an existing account.
-	 */
-	protected boolean isValidRegistration(String user, String pass) {
-		boolean isValid = false;
-		
-		try {
-			isValid = CredentialHandler.getInstance().isValidLogin(user, pass);
-		}
-		catch(Exception ex) {
-			System.out.println("<hr>" + ex.getMessage() + "<hr>");
-		}
-		
-		return isValid;
-	}
-
 
 }
