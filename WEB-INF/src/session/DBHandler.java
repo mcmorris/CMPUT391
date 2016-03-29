@@ -42,6 +42,26 @@ public class DBHandler {
 	}
 
 	/*
+	 *   Start a connection for use of upload.
+	 */
+	public Connection startUpload() {
+		conn = getConnection();
+		conn.setAutoCommit(false);
+		return conn;
+	}
+
+	/*
+	 *   End connection for use with upload, commit transaction or rollback as needed.
+	 */	
+	public void endUpload(conn) {
+		try {
+			conn.commit();
+		} catch (SQLException ex) {
+			DBHandler.getInstance().safeCloseTrans(conn);
+		}
+	}
+
+	/*
 	 *	 Safely close a connection with running transaction.
 	 */
 	public void safeCloseTrans(Connection conn) {
