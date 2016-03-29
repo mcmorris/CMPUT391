@@ -72,48 +72,39 @@ public class Picture {
 		// For batch updates, client is not going to be able to set subject, place, timing, description.  Set to defaults.
 	}
   
-  // Get a group from groups.
-  public ResultSet get(Connection conn, int groupId) {
-    ResultSet results = null;
-    
-    if (conn != null) {
-      PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM groups WHERE group_id = ?;");
-      pstmt.setInt(1, groupId);
-      
-      results = pstmt.executeQuery();
-    }
-    
-    return results;
-  }
-  
-    // Get a group from groups.
-  public ResultSet getByName(Connection conn, String name) {
-    ResultSet results = null;
-    
-    if (conn != null) {
-      PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM groups WHERE group_name = ?;");
-      pstmt.setString(1, name);
-      
-      results = pstmt.executeQuery();
-    }
-    
-    return results;
-  }
-  
-  // Get owner groups from groups.
-  public ResultSet getGroups(Connection conn, String curUser) {
-    ResultSet results = null;
-    
-    if (conn != null) {
-      PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM groups WHERE user_name = ?;");
-      pstmt.setString(1, curUser);
-      
-      results = pstmt.executeQuery();
-    }
-    
-    return results;
-	}
-  
+  	public ResultSet get(Connection conn, HttpRequest request, String picId, String mode) {
+  		ResultSet results = null;
+		if (conn == null) return;
+		
+		PreparedStatement pstmt = null;
+		
+		if (mode == "big") {
+			pstmt = conn.prepareStatement("SELECT photo FROM images WHERE photo_id = ?;");	
+		} else {
+			pstmt = conn.prepareStatement("SELECT thumbnail FROM images WHERE photo_id = ?;");
+		}
+		
+		pstmt.setInt(1, Integer.parse(picId));
+		
+		ServletOutputStream out = response.getOutputStream();
+		results = pstmt.executeQuery();
+		if (results.next()) {
+			response.setContentType("image/gif");
+			InputStream input = results.getBinaryStream(1);
+			int imageByte;
+			
+			while((imageByte = input.read()) != -1) {
+				out.write(imageByte);
+			}
+			
+			input.close();
+		} else {
+			out.println("no picture available");
+		}
+		
+		return results;	
+  	}
+
 	//shrink image by a factor of n, and return the shrinked image
 	public static BufferedImage shrink(BufferedImage image, int n) {
 		
