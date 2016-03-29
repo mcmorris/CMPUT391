@@ -22,20 +22,6 @@ import session.DBHandler;
  */
 public class Picture {
 
-	public Connection startUpload() {
-		conn = DBHandler.getInstance().getConnection();
-		conn.setAutoCommit(false);
-		return conn;
-	}
-	
-	public void endUpload(conn) {
-		try {
-			conn.commit();
-		} catch (SQLException ex) {
-			DBHandler.getInstance().safeCloseTrans(conn);
-		}
-	}
-
   	// Add a group to groups.
   	public void add(Connection conn, HttpRequest request, FileItem item) {
 		if (conn == null) return;
