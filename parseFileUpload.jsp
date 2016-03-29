@@ -55,7 +55,7 @@
   File fout;
   
   Picture pic = new Picture();
-  Connection conn = startUpload();
+  Connection conn = DBHandler.getInstance().startUpload();
   
   out.println(" Let's read input files ...");
   while (iter.hasNext()) {
@@ -130,6 +130,6 @@
     out.println("Exception e = " + e.toString());
   }
   
-  pic.endUpload(conn);
+  DBHandler.getInstance().endUpload(conn);
   out.close();
 %>
