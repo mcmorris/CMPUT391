@@ -1,35 +1,29 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="session.*" %>
-<%@ page import="model.Group*" %>
+<%@ page import="model.Profile*" %>
 
 <HTML>
 <HEAD>
-<TITLE>Group Members</TITLE>
+<TITLE>User Profile</TITLE>
 </HEAD>
 
 <BODY>
-
 <UL>
 	<LI><a href="login.html">Logout</a></LI>
-	<LI><a href="profile.html>Profile</a></LI>
+	<LI><a href="profile.jsp>Profile</a></LI>
 	<LI><a href="groups.jsp">Privacy</a></LI>
 	<LI><a href="upload.html">Share</a></LI>
 	<LI><a href="display.html">Browse</a></LI>
 	<LI><a href="search.html">Search</a></LI>
 	<LI><a href="analytics.html">Analytics</a></LI>
 </UL>
-<h1>User Groups</h1>
+<h1>User Profile</h1>
 <% 
 	try
 	{
 		//establish connection to the underlying database
 		conn = DBHandler.getInstance().getConnection();
 		String user = CredentialHandler.getInstance().getSessionUserName(request);
-		
-		// Get gId from url.
-		String gIdStr = request.getParameter("gId");
-		int gId = Integer.parseInt(gIdStr);
-		
 		if(user.isEmpty() == true)
 		{
 %>
@@ -37,28 +31,17 @@
 <%
 		}
 		
-		GroupList gl = new GroupList();
-		results = gl.get(conn, user, gId);
-      		
-		if (!rs.next()) {                            // Then there are no rows.
-			System.out.println("<p>You have added no friends to this group.  Why not add one?</p>");
+		Profile p = new Profile();
+		results = p.get(conn, user);
+		
+		if (!rs.next()) {                            // Then there are no rows, in this case, should not be possible.
+			System.out.println("<p>Your profile does not exist.  Please contact admin, this should not have occurred.</p>");
 		} else {
-			out.println("<table>");
-			do {
-				out.println("<tr>");
-				// Get data from the current row and use it
-				out.println("<td>");
-				out.println(results.getString(2));
-				out.println("</td>");
-				out.println("<td>");
-				out.println(results.getString(3));
-				out.println("</td>");
-				out.println("<td>");
-				out.println(results.getString(4));
-				out.println("</td>");
-				out.println("</tr>");
-			} while (rs.next());
-			out.println("</table>");
+			out.println("<h2>" + results.getString(1) + "</h2><br>");
+			out.println("Name: " + results.getString(2) + " " + results.getString(3) + "<br>");
+			out.println("Address: " + results.getString(4) + "<br>");
+			out.println("Email: " + results.getString(5) + "<br>");
+			out.println("Phone: " + results.getString(6) + "<br>");
 		}
 		
 	} catch(SqlException sqlEx){
@@ -69,13 +52,9 @@
 	
 	DBHandler.getInstance().safeCloseConn(conn);
 %>
-
-<FORM NAME="FriendServlet" ACTION="friendservlet" METHOD="post">
-<INPUT TYPE="text" NAME="friend" VALUE="friend name"><br>
-<INPUT TYPE="radio" name="mode" value="add">Add<br>
-<INPUT TYPE="radio" name="mode" value="del">Remove<br>
-<INPUT TYPE="submit" NAME="".submit" VALUE="Submit"><br>
-</FORM>
+<br>
+<a href="groups.jsp">Change your privacy settings here</a>
+<br>
 
 </BODY>
 </HTML>
