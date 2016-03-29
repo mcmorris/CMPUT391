@@ -23,7 +23,7 @@ import session.DBHandler;
 public class Profile {
 	
   	// Add a profile to Profile.
-  	public void add(Connection conn, Request request, String user) {
+  	public void add(Connection conn, Request request) {
 	  if (conn == null) return;
 		
 		String user = request.getParameter("USERID");
