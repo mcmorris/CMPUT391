@@ -24,26 +24,26 @@ public class GroupList {
   
   // Add an entry to GroupList 
   public void add(Connection conn, int groupId, String friend) {
-	  if (conn == null) return;
-		
-		// Real world, would check to ensure a group with this name for this user does not already exist, and that group is not named "private" or "public".  Not included here, not in assignment specs.
-		PreparedStatement pstmt = conn.prepareStatement("INSERT INTO group_lists values(?, ?, SYSDATE, null);");
-    pstmt.setInt(1, groupId);
-    pstmt.setString(2, friend);
-    
-		pstmt.executeUpdate();
+	if (conn == null) return;
+	
+	// Real world, would check to ensure a group with this name for this user does not already exist, and that group is not named "private" or "public".  Not included here, not in assignment specs.
+	PreparedStatement pstmt = conn.prepareStatement("INSERT INTO group_lists values(?, ?, SYSDATE, null);");
+	pstmt.setInt(1, groupId);
+	pstmt.setString(2, friend);
+	
+	pstmt.executeUpdate();
   }
   
   // Remove an entry from GroupList 
   public void remove(Connection conn, int groupId, String friend) {
-	  if (conn == null) return;
+	if (conn == null) return;
 		
-		// Real world, would check to ensure a group with this name for this user does not already exist, and that group is not named "private" or "public".  Not included here, not in assignment specs.
-		PreparedStatement pstmt = conn.prepareStatement("DELETE FROM grouplist WHERE group_id = ? AND friend_id = ?;");
-    pstmt.setInt(1, groupId);
-    pstmt.setString(2, friend);
-    
-		pstmt.executeUpdate();
+	// Real world, would check to ensure a group with this name for this user does not already exist, and that group is not named "private" or "public".  Not included here, not in assignment specs.
+	PreparedStatement pstmt = conn.prepareStatement("DELETE FROM grouplist WHERE group_id = ? AND friend_id = ?;");
+	pstmt.setInt(1, groupId);
+	pstmt.setString(2, friend);
+		
+	pstmt.executeUpdate();
   }
   
   // Get an entry from GroupList.
