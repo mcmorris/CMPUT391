@@ -20,56 +20,50 @@ import session.DBHandler;
  * @author mcmorris
  *
  */
-public class ModifyGroupServlet extends HttpServlet {
+public class FriendServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// get request parameters for group name
 		String gIdStr = request.getParameter("GROUPID");
 		String selUser = request.getParameter("SELUSER");
 		String mode = request.getParameter("MODE");
-	    
-	 	PrintWriter out = response.getWriter();
-	 	Connection conn = null;
 		
-	 	try {
-	 		
-	 		//establish connection to the underlying database
-	 		conn = DBHandler.getInstance().getConnection();
-	 		conn.setAutoCommit(false);
-	 		
-	 		String user = CredentialHandler.getInstance().getSessionUserName(request, response);
-			String sqlGroups = "";
+		PrintWriter out = response.getWriter();
+		Connection conn = null;
+		
+		try {
+			//establish connection to the underlying database
+			conn = DBHandler.getInstance().getConnection();
+			conn.setAutoCommit(false);
 			
+			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
 			int gId = Integer.parseInt(gIdStr);
 			
+			GroupList gl = new GroupList();
 			if(mode == "add") {
-				sqlGroups = "INSERT INTO grouplist values(" + gId + ", '" + selUser + "', SYSDATE, null);";
+				gl.add(conn, gId, selUser);
 			}
 			else {
-				sqlGroups = "DELETE FROM grouplist WHERE friendtoadd = '" + selUser + "';";
+				gl.remove(conn, gId, selUser);
 			}
 			
-			Statement state = conn.createStatement();
-			state.executeUpdate(sqlGroups);
-			conn.commit();
-			
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/addFriend.html");
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/friend.jsp?gId=" + gId);
 			out.println("<font color=green>Your group has been modified.</font>");
 			rd.include(request, response);
 			
 			DBHandler.getInstance().safeCloseConn(conn);
 			
-	 	} catch (SQLException sqle) {
-	 		DBHandler.getInstance().safeCloseTrans(conn);
+		} catch (SQLException sqle) {
+			DBHandler.getInstance().safeCloseConn(conn);
 			
-	 		RequestDispatcher rd = getServletContext().getRequestDispatcher("/addFriend.html");
-	 		out.println("<font color=red>Modification of your group failed.  Please try again.</font>");
-	 		rd.include(request, response);
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/friend.jsp?gId=" + gId);
+			out.println("<font color=red>Modification of your group failed.  Please try again.</font>");
+			rd.include(request, response);
 		} catch (Exception ex) {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
 		
 	}
-
+	
 }
