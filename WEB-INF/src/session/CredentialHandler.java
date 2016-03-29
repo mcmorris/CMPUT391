@@ -32,7 +32,7 @@ public class CredentialHandler {
 	 */
 	protected void createSession(HttpServletRequest request, int timeoutMin) {
 		String user = request.getParameter("USERID");
-
+		
 		HttpSession session = request.getSession();
 		session.setAttribute("user", user);
 		session.setMaxInactiveInterval(timeoutMin*60);
@@ -46,51 +46,44 @@ public class CredentialHandler {
 	 */
 	protected void endSession(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("text/html");
-	        Cookie[] cookies = request.getCookies();
-	        if(cookies != null) {
-		        for(Cookie cookie : cookies) {
-		            if(cookie.getName().equals("JSESSIONID")) {
-		                System.out.println("JSESSIONID="+cookie.getValue());
-		                break;
-		            }
-		            
-		            // Send response invalidating our own cookies.
-		            cookie.setMaxAge(0);
-		            response.addCookie(cookie);
+		Cookie[] cookies = request.getCookies();
+		if(cookies != null) {
+			for(Cookie cookie : cookies) {
+				if(cookie.getName().equals("JSESSIONID")) {
+					System.out.println("JSESSIONID="+cookie.getValue());
+					break;
+				}
+				
+				// Send response invalidating our own cookies.
+				cookie.setMaxAge(0);
+				response.addCookie(cookie);
 		        }
-	        }
-	        
-	        //invalidate the session if exists
-	        HttpSession session = request.getSession(false);
-	        System.out.println("User="+session.getAttribute("user"));
-	        if(session != null) {
-	            session.invalidate();
-	        }
+		}
+		
+		//invalidate the session if exists
+		HttpSession session = request.getSession(false);
+		System.out.println("User="+session.getAttribute("user"));
+		if(session != null) {
+			session.invalidate();
+		}
 	}
 	
 	/*
 	 *	Checks logon query matches existing user record
 	 */
 	public boolean isValidLogin(String userName, String passwd) throws Exception, SQLException {
-		//select the user table from the underlying db and validate the user name and password
-        	Statement query = null;
-		ResultSet results = null;
-
-		// Needs protection from injection attack.
-        	String sql = "select password from users where user_name = '" + userName + "'";
-
-		String trimmedPwd = "";
-		Connection conn = null;		
-		
-		conn = DBHandler.getInstance().getConnection();
+		Connection conn = DBHandler.getInstance().getConnection();
 		conn.setAutoCommit(false);
-
-		query = conn.createStatement();
-		results = query.executeQuery(sql);
+		
+		PreparedStatement pstmt = conn.prepareStatement("select password from users where user_name = ?;");
+		pstmt.setString(1, userName);
+		ResultSet results = pstmt.executeQuery();
+		
+		String trimmedPwd = "";
 		while(results != null && results.next()) {
 			trimmedPwd = (results.getString(1)).trim();
 		}
-
+		
 		DBHandler.getInstance().safeCloseConn(conn);
 		return (passwd.equals(trimmedPwd));
 	}
@@ -99,12 +92,12 @@ public class CredentialHandler {
 	 * Checks user has established session, otherwise kicks back to login page.
 	 */
 	public boolean credentialCheck(HttpServletRequest request) throws IOException {
-	        HttpSession session = request.getSession(false);
-	    	if(session.getAttribute("user") == null) {
-	    	    return false;
-	    	}
-	    	
-	    	return true;
+		HttpSession session = request.getSession(false);
+		if(session.getAttribute("user") == null) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/*
