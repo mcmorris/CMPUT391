@@ -24,21 +24,21 @@
 </servlet-mapping>
 
 <servlet>
-<servlet-name>CreateGroupServlet</servlet-name>
-<servlet-class>security.CreateGroupServlet</servlet-class>
+<servlet-name>GroupServlet</servlet-name>
+<servlet-class>security.GroupServlet</servlet-class>
 </servlet>
 <servlet-mapping>
-<servlet-name>CreateGroupServlet</servlet-name>
-<url-pattern>/creategroupservlet</url-pattern>
+<servlet-name>GroupServlet</servlet-name>
+<url-pattern>/groupservlet</url-pattern>
 </servlet-mapping>
 
 <servlet>
-<servlet-name>ModifyGroupServlet</servlet-name>
-<servlet-class>security.ModifyGroupServlet</servlet-class>
+<servlet-name>FriendServlet</servlet-name>
+<servlet-class>security.FriendServlet</servlet-class>
 </servlet>
 <servlet-mapping>
-<servlet-name>ModifyGroupServlet</servlet-name>
-<url-pattern>/modifygroupservlet</url-pattern>
+<servlet-name>FriendServlet</servlet-name>
+<url-pattern>/friendservlet</url-pattern>
 </servlet-mapping>
 
 <servlet>
