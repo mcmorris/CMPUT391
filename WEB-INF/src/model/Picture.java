@@ -22,20 +22,43 @@ import session.DBHandler;
  */
 
 public class Picture {
-  
-  UPLOAD FILES
-  {
-    UPLOAD FILE
-    ADD(FILE)
-    DELETE FILE
-  }
+	final String tempDirectory = "/tmp/";
+	final int maxRequestSize = 2000000000;
+	final int maxMemorySize  = 10000000;
+	
+	// Upload one or more images to database.
+  	public void upload() {
+		
+		// Create a factory for disk-based file items
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		
+		// Set factory constraints
+		factory.setSizeThreshold(maxMemorySize);
+		factory.setRepository(new File(tempDirectory));
+		
+		// Create a new file upload handler
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		upload.setSizeMax(maxRequestSize);
+		
+		// Process the uploaded items
+		Iterator iter = items.iterator();
+		FileItem fileItem;
+		File fout;
+		
+		while (iter.hasNext()) {
+			UPLOAD FILE
+			
+			// Add uploaded image to DB
+			add(conn, request, item);
+			
+			// File added to DB, delete from temp file folder.
+			fileItem.delete();
+		} // while
+  	}
   
   	// Add a group to groups.
-  	public void add(Connection conn, HttpRequest request, InputStream instream) {
+  	public void add(Connection conn, HttpRequest request, FileItem item) {
 		if (conn == null) return;
-		
-		// isThumbnail - inStreamThumbNail
-		// isImage - inStreamImage
 		
 		String ownerName = request.getParameter("owner");
 		int permitted = request.getParameter("permitted");
