@@ -20,46 +20,8 @@ import session.DBHandler;
  * @author mcmorris
  *
  */
-
 public class Picture {
-	final String tempDirectory = "/tmp/";
-	final int maxRequestSize = 2000000000;
-	final int maxMemorySize  = 10000000;
-	
-	// Upload one or more images to database.
-  	public void upload() {
-		
-		// Create a factory for disk-based file items
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		
-		// Set factory constraints
-		factory.setSizeThreshold(maxMemorySize);
-		factory.setRepository(new File(tempDirectory));
-		
-		// Create a new file upload handler
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setSizeMax(maxRequestSize);
-		
-		// Process the uploaded items
-		List /* FileItem */ items = upload.parseRequest(request);
-		Iterator iter = items.iterator();
-		FileItem fileItem;
-		File fout;
-		
-		while (iter.hasNext()) {
-			// Form Fields are not images and should not be uploaded as such.
-			if (!fileItem.isFormField()) {
-				UPLOAD FILE
-				
-				// Add uploaded image to DB
-				add(conn, request, item);
-				
-				// File added to DB, delete from temp file folder.
-				fileItem.delete();
-			}
-		} // while
-  	}
-  
+
   	// Add a group to groups.
   	public void add(Connection conn, HttpRequest request, FileItem item) {
 		if (conn == null) return;
@@ -100,10 +62,13 @@ public class Picture {
 		ImageIO.write(thumbNail, "jpg", outstream);
 		
 		instream.close();
-	    outstream.close();
-	    
-	    // FIXME: I feel like BufferedImage img hasn't been written to DB.  What's up with that?
-	    
+		outstream.close();
+		
+		// FIXME: I feel like BufferedImage img hasn't been written to DB.  What's up with that?
+		
+		// File added to DB, delete from temp file folder.
+		fileItem.delete();
+		
 		// For batch updates, client is not going to be able to set subject, place, timing, description.  Set to defaults.
 	}
   
