@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.User;
+
 /**
  * Servlet implementation class LoginServlet
  * @author mcmorris
@@ -21,33 +23,36 @@ public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// get request parameters for userID and password
-	 	String user = request.getParameter("USERID");
-	 	String pwd = request.getParameter("PASSWD");
-		boolean valid = false;		
-    
 		PrintWriter out = response.getWriter();
+		boolean valid = false;
+		
+		Connection conn = null;
+		User u = new User();
 		
 		try {
 			//establish connection to the underlying database
-			valid = CredentialHandler.getInstance().isValidLogin(user, pwd);
+			conn = DBHandler.getInstance().getConnection();
+			conn.setAutoCommit(false);
+			
+			valid = u.isValidLogin(conn, user, pwd);
 			if(valid) {
 				CredentialHandler.getInstance().createSession(request, response, 30);
 				String encodedURL = response.encodeRedirectURL("LoginSuccess.jsp");
 				response.sendRedirect(encodedURL);
-        	}
- 
+			}
+			
+			DBHandler.getInstance().safeCloseConn(conn);
 		}
 		catch(Exception ex) {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
+			DBHandler.getInstance().safeCloseConn(conn);
 		}
-
-        if (valid == false) {
-            RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
-            out.println("<font color=red>There has been a mistake in your credential submission.  Please try again.</font>");
-            rd.include(request, response);
-        }
- 
-    }
- 
+		
+		if (valid == false) {
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+			out.println("<font color=red>There has been a mistake in your credential submission.  Please try again.</font>");
+			rd.include(request, response);
+		}
+		
+	}
 }
