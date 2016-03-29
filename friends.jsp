@@ -24,16 +24,18 @@
 	{
 		//establish connection to the underlying database
 		conn = DBHandler.getInstance().getConnection();
-			 		
 		String user = CredentialHandler.getInstance().getSessionUserName(request);
+		
+		// Get gId from url.
+		String gIdStr = request.getParameter("gId");
+		int gId = Integer.parseInt(gIdStr);
+		
 		if(user.isEmpty() == true)
 		{
 %>
 <jsp:forward page="login.html" />
 <%
 		}
-		
-		GET GID FROM URL
 		
 		GroupList gl = new GroupList();
 		results = gl.get(conn, user, gId);
@@ -48,6 +50,7 @@
 				out.println("<td>");
 				out.println(results.getString(2));
 				out.println("</td>");
+				out.println("<td>");
 				out.println(results.getString(3));
 				out.println("</td>");
 				out.println("<td>");
