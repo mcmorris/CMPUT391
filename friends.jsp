@@ -33,22 +33,21 @@
 <%
 		}
 		
-		Groups grps = new Groups();
-		results = grps.getOwnedGroups(conn, user);
+		GET GID FROM URL
+		
+		GroupList gl = new GroupList();
+		results = gl.get(conn, user, gId);
       		
 		if (!rs.next()) {                            // Then there are no rows.
-			System.out.println("<p>You do not own any groups.  Why not create one?</p>");
+			System.out.println("<p>You have added no friends to this group.  Why not add one?</p>");
 		} else {
 			out.println("<table>");
 			do {
 				out.println("<tr>");
 				// Get data from the current row and use it
 				out.println("<td>");
-				out.println(results.getInt(1));
-				out.println("</td>");
 				out.println(results.getString(2));
 				out.println("</td>");
-				out.println("<td>");
 				out.println(results.getString(3));
 				out.println("</td>");
 				out.println("<td>");
@@ -58,7 +57,7 @@
 			} while (rs.next());
 			out.println("</table>");
 		}
-	
+		
 	} catch(SqlException sqlEx){
 		out.println("<hr>" + sqlEx.getMessage() + "<hr>");
 	} catch(Exception ex){
@@ -67,10 +66,11 @@
 	
 	DBHandler.getInstance().safeCloseConn(conn);
 %>
+
 <FORM NAME="FriendServlet" ACTION="friendservlet" METHOD="post">
-<INPUT TYPE="text" NAME="group" VALUE="group name"><br>
-<INPUT TYPE="radio" name="mode" value="add">Create<br>
-<INPUT TYPE="radio" name="mode" value="edit">Modify<br>
+<INPUT TYPE="text" NAME="friend" VALUE="friend name"><br>
+<INPUT TYPE="radio" name="mode" value="add">Add<br>
+<INPUT TYPE="radio" name="mode" value="del">Remove<br>
 <INPUT TYPE="submit" NAME="".submit" VALUE="Submit"><br>
 </FORM>
 
