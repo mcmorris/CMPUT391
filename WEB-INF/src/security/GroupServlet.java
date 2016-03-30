@@ -24,6 +24,12 @@ import model.Group;
 public class GroupServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		PrintWriter out = response.getWriter();
+		
+		out.println("oh burn your face!");
+	}
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// get request parameters for group name
 		String gName = request.getParameter("group");
