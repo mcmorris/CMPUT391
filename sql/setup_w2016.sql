@@ -10,6 +10,7 @@ DROP SEQUENCE groups_seq;
 DROP TRIGGER images_ins;
 DROP TRIGGER groups_ins;
 
+DROP TABLE image_views;
 DROP TABLE images;
 DROP TABLE group_lists;
 DROP TABLE groups;
