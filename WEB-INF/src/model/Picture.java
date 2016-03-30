@@ -3,16 +3,24 @@
  */
 package model;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+
+import oracle.jdbc.OracleResultSet;
+import oracle.sql.BLOB;
 import session.CredentialHandler;
 import session.DBHandler;
 
@@ -23,14 +31,14 @@ import session.DBHandler;
 public class Picture {
 
   	// Add a group to groups.
-  	public void add(Connection conn, HttpRequest request, FileItem item) {
+  	public void add(Connection conn, HttpServletRequest request, FileItem item) throws SQLException, IOException {
 		if (conn == null) return;
 		
 		String ownerName = request.getParameter("owner");
-		int permitted = request.getParameter("permitted");
+		int permitted = Integer.parseInt(request.getParameter("permitted"));
 		String subject = request.getParameter("subject");
 		String place = request.getParameter("place");
-		Date timing = request.getParameter("timing");
+		String timing = request.getParameter("timing");
 		String description = request.getParameter("description");
 		
 		//Get the image stream
@@ -41,11 +49,11 @@ public class Picture {
 		
 		// Oracle is the stupid, and requires all blobs to be inserted as empty objects during add.
 		PreparedStatement pstmt = conn.prepareStatement("insert into photos values(0, ?, ?, ?, ?, ?, ?, empty_blob(), empty_blob())");
-		pstmt.setString(1, owner_name);
+		pstmt.setString(1, ownerName);
 		pstmt.setInt(2, permitted);
 		pstmt.setString(3, subject);
 		pstmt.setString(4, place);
-		pstmt.setDate(5, timing);
+		pstmt.setString(5, timing);
 		pstmt.setString(6, description);
 		pstmt.executeUpdate();
 		
@@ -53,7 +61,7 @@ public class Picture {
 		// Note: to retrieve the lob_locator that you must use "FOR UPDATE" in the select statement
 		// It would have been nicer to retrieve the new id from the result of pstmt.executeUpdate().  Oh well.
 		PreparedStatement pstmt2 = conn.prepareStatement("SELECT images_seq.CURRVAL FROM dual;");
-		ResultSet results = pstmt2.executeQuery(cmd);
+		ResultSet results = pstmt2.executeQuery();
 		results.next();
 		
 		BLOB myThumb = ((OracleResultSet)results).getBLOB(7);
@@ -71,14 +79,14 @@ public class Picture {
 		instream.close();
 		
 		// File added to DB, delete from temp file folder.
-		fileItem.delete();
+		item.delete();
 		
 		// For batch updates, client is not going to be able to set subject, place, timing, description.  Set to defaults.
 	}
   
-  	public ResultSet get(Connection conn, HttpRequest request, String picId, String mode) {
+  	public ResultSet get(Connection conn, HttpServletRequest request, HttpServletResponse response, String picId, String mode) throws SQLException, IOException {
   		ResultSet results = null;
-		if (conn == null) return;
+		if (conn == null) return results;
 		
 		PreparedStatement pstmt = null;
 		
@@ -88,7 +96,7 @@ public class Picture {
 			pstmt = conn.prepareStatement("SELECT thumbnail FROM images WHERE photo_id = ?;");
 		}
 		
-		pstmt.setInt(1, Integer.parse(picId));
+		pstmt.setInt(1, Integer.parseInt(picId));
 		
 		ServletOutputStream out = response.getOutputStream();
 		results = pstmt.executeQuery();
@@ -111,30 +119,27 @@ public class Picture {
   	
   	public ResultSet getTopFive()
   	{
-  		EACH PICTURE MUST BE RANKED
-  		
+  		//EACH PICTURE MUST BE RANKED
+  		return null;
   	}
   	
   		/*
 	 * Check user has permission to view image.
 	 */
 	protected boolean isPermitted(Connection conn, HttpServletRequest request, HttpServletResponse response, int pictureId) {
-		if (conn == null) return;
+		if (conn == null) return false;
 		
 		boolean permitted = false;
 		
 		//select the user table from the underlying db and validate the user name and password
 		ResultSet results = null;
-		
-		// Needs protection from injection attack.
-		String picSql = "select owner_name, permitted from images where photo_id = '" + pictureId + "'";
-		
+				
 		String trimmedOwnerName = "";
 		String trimmedGroupId = "";
 
 		try
 		{
-			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+			String user = CredentialHandler.getInstance().getSessionUserName(request);
 			if (user.equals("admin") == true) return true; 		// Admin gets special privileges.
 			
 			conn = DBHandler.getInstance().getConnection();

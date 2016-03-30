@@ -3,18 +3,12 @@
  */
 package model;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import session.CredentialHandler;
-import session.DBHandler;
 
 /**
  * @author mcmorris
@@ -23,9 +17,9 @@ import session.DBHandler;
 public class User {
 
 	/*
-	 * Add a profile to Profile.
+	 * Add a profile to Person.
 	 */
-	public void add(Connection conn, Request request) {
+	public void add(Connection conn, HttpServletRequest request) throws SQLException {
 	    	if (conn == null) return;
 			
 		String user = request.getParameter("USERID");
@@ -46,7 +40,7 @@ public class User {
 		
 		if (conn != null) {
 			PreparedStatement pstmt = conn.prepareStatement("COUNT(*) FROM users WHERE user_name = ?;");
-			pstmt.setString(1, user);
+			pstmt.setString(1, userName);
 			
 			results = pstmt.executeQuery();
 			if (results != null && results.getInt(1) == 0) {
