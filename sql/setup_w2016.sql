@@ -106,3 +106,10 @@ BEGIN
 END;
 
 /
+
+CREATE INDEX iPhoto_subject ON item(images.subject) INDEXTYPE IS CTXSYS.CONTEXT;
+CREATE INDEX iPhoto_place ON item(images.place) INDEXTYPE IS CTXSYS.CONTEXT;
+CREATE INDEX iPhoto_desc ON item(images.description) INDEXTYPE IS CTXSYS.CONTEXT;
+@drjobdml iPhoto_subject 1
+@drjobdml iPhoto_place 1
+@drjobdml iPhoto_desc 1
