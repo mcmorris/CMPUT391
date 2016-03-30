@@ -108,6 +108,79 @@ public class Picture {
 		
 		return results;	
   	}
+  	
+  	public ResultSet getTopFive()
+  	{
+  		EACH PICTURE MUST BE RANKED
+  		
+  	}
+  	
+  		/*
+	 * Check user has permission to view image.
+	 */
+	protected boolean isPermitted(Connection conn, HttpServletRequest request, HttpServletResponse response, int pictureId) {
+		if (conn == null) return;
+		
+		boolean permitted = false;
+		
+		//select the user table from the underlying db and validate the user name and password
+		ResultSet results = null;
+		
+		// Needs protection from injection attack.
+		String picSql = "select owner_name, permitted from images where photo_id = '" + pictureId + "'";
+		
+		String trimmedOwnerName = "";
+		String trimmedGroupId = "";
+
+		try
+		{
+			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+			if (user.equals("admin") == true) return true; 		// Admin gets special privileges.
+			
+			conn = DBHandler.getInstance().getConnection();
+			
+			PreparedStatement pstmt = conn.prepareStatement("SELECT owner_name, permitted from photos WHERE photo_id = ?;");
+			pstmt.setInt(1, pictureId);
+			results = pstmt.executeQuery();
+			while(results != null && results.next()) {
+				trimmedOwnerName = (results.getString(1)).trim();
+				trimmedGroupId = (results.getString(2)).trim();
+			}
+			
+			int groupId = Integer.parseInt(trimmedGroupId);
+			
+			// Public means always true.
+			if (groupId == 1) permitted = true;
+			
+			// Private means only true if creator.
+			else if (groupId == 2) {
+				permitted = user.equals(trimmedOwnerName);
+			}
+			
+			// Otherwise, is custom group, true if user is on group_lists as friend_id
+			else {
+				PreparedStatement pstmt2 = conn.prepareStatement("SELECT * FROM images WHERE group_id = ? AND friend_id = ?;");
+				pstmt2.setInt(1, groupId);
+				pstmt2.setString(2, user);
+				results = pstmt.executeQuery();
+				if(results != null && results.next()) {
+					permitted = true;
+				}
+				
+			}
+			
+		}
+		catch (SQLException sqlEx) {
+			System.out.println("<hr>" + sqlEx.getMessage() + "<hr>");
+		}
+		catch (Exception ex) {
+			System.out.println("<hr>" + ex.getMessage() + "<hr>");
+		}
+		
+		DBHandler.getInstance().safeCloseConn(conn);
+		return permitted;
+	}
+  	
 
 	//shrink image by a factor of n, and return the shrinked image
 	public static BufferedImage shrink(BufferedImage image, int n) {
