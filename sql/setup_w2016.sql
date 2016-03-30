@@ -121,3 +121,5 @@ CREATE INDEX iPhoto_desc ON images(description) INDEXTYPE IS CTXSYS.CONTEXT;
 @drjobdml iPhoto_subject 1
 @drjobdml iPhoto_place 1
 @drjobdml iPhoto_desc 1
+
+COMMIT;

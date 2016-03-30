@@ -44,3 +44,4 @@ INSERT INTO group_lists values(5, 'mmorris', SYSDATE, null);
 /* If in group 'administration' can view image.  No exceptions. */
 /* May limit viewing group to: public, private, or any one other group.  Again, admin can always view. */
 
+COMMIT;
