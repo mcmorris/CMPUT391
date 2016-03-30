@@ -107,6 +107,13 @@ END;
 
 /
 
+CREATE TABLE image_views (
+   photo_id    int,
+   views    int,
+   PRIMARY KEY(photo_id),
+   FOREIGN KEY(photo_id) REFERENCES images
+);
+
 CREATE INDEX iPhoto_subject ON images(subject) INDEXTYPE IS CTXSYS.CONTEXT;
 CREATE INDEX iPhoto_place ON images(place) INDEXTYPE IS CTXSYS.CONTEXT;
 CREATE INDEX iPhoto_desc ON images(description) INDEXTYPE IS CTXSYS.CONTEXT;
