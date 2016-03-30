@@ -5,49 +5,49 @@
  http://java.sun.com/xml/ns/jee/web-app_2_4.xsd"
  version="2.4">
 
-<servlet>
-<servlet-name>LoginServlet</servlet-name>
-<servlet-class>session.LoginServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>LoginServlet</servlet-name>
-<url-pattern>/loginservlet</url-pattern>
-</servlet-mapping>
+	<servlet>
+		<servlet-name>LoginServlet</servlet-name>
+		<servlet-class>session.LoginServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LoginServlet</servlet-name>
+		<url-pattern>/loginservlet</url-pattern>
+	</servlet-mapping>
 
-<servlet>
-<servlet-name>LogoutServlet</servlet-name>
-<servlet-class>session.LogoutServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>LogoutServlet</servlet-name>
-<url-pattern>/logoutservlet</url-pattern>
-</servlet-mapping>
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>session.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/logoutservlet</url-pattern>
+	</servlet-mapping>
 
-<servlet>
-<servlet-name>GroupServlet</servlet-name>
-<servlet-class>security.GroupServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>GroupServlet</servlet-name>
-<url-pattern>/groupservlet</url-pattern>
-</servlet-mapping>
+	<servlet>
+		<servlet-name>GroupServlet</servlet-name>
+		<servlet-class>security.GroupServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GroupServlet</servlet-name>
+		<url-pattern>/groupservlet</url-pattern>
+	</servlet-mapping>
 
-<servlet>
-<servlet-name>FriendServlet</servlet-name>
-<servlet-class>security.FriendServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>FriendServlet</servlet-name>
-<url-pattern>/friendservlet</url-pattern>
-</servlet-mapping>
+	<servlet>
+		<servlet-name>FriendServlet</servlet-name>
+		<servlet-class>security.FriendServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FriendServlet</servlet-name>
+		<url-pattern>/friendservlet</url-pattern>
+	</servlet-mapping>
 
-<servlet>
-<servlet-name>UploadServlet</servlet-name>
-<servlet-class>session.UploadServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>UploadServlet</servlet-name>
-<url-pattern>/uploadservlet</url-pattern>
-</servlet-mapping>
+	<filter>
+		<filter-name>loginFilter</filter-name>
+		<filter-class>session.LoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>loginFilter</filter-name>
+		<url-pattern>/app/*</url-pattern>
+	</filter-mapping>
 
 </web-app>
