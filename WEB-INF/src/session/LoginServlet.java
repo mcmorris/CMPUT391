@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.User;
-
 /**
  * Servlet implementation class LoginServlet
  * @author mcmorris
@@ -26,14 +24,14 @@ public class LoginServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		boolean valid = false;
 		
-		String user = request.getParameter("userid");
-		String pwd = request.getParameter("password");
+		String user = request.getParameter("USERID");
+		String pwd = request.getParameter("PASSWD");
 		
 		try {
 			valid = CredentialHandler.getInstance().isValidLogin(user, pwd);
 			if(valid) {
 				CredentialHandler.getInstance().createSession(request, response, 30);
-				String encodedURL = response.encodeRedirectURL("display.jsp");
+				String encodedURL = response.encodeRedirectURL("app/display.jsp");
 				response.sendRedirect(encodedURL);
 			}
 		}

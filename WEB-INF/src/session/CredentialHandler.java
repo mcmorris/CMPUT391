@@ -76,17 +76,23 @@ public class CredentialHandler {
 		Connection conn = DBHandler.getInstance().getConnection();
 		conn.setAutoCommit(false);
 		
-		PreparedStatement pstmt = conn.prepareStatement("select password from users where user_name = ?;");
+		//String sql = "select password from users where user_name = '" + userName + "'";
+		PreparedStatement pstmt = conn.prepareStatement("select password from users where user_name = ?");
 		pstmt.setString(1, userName);
-		ResultSet results = pstmt.executeQuery();
-		
-		String trimmedPwd = "";
-		while(results != null && results.next()) {
-			trimmedPwd = (results.getString(1)).trim();
+		//Statement stmt = conn.createStatement();
+		//ResultSet results = stmt.executeQuery(sql);
+		    
+		ResultSet results = pstmt.executeQuery();		
+		String dbPwd = "";
+		if (results != null && results.next()) {
+			dbPwd = results.getString(1);
 		}
 		
+		//System.out.println(sql);
+		System.out.println(passwd + " " + dbPwd);
+		
 		DBHandler.getInstance().safeCloseConn(conn);
-		return (passwd.equals(trimmedPwd));
+		return (passwd.equals(dbPwd));
 	}
 	
 	/*

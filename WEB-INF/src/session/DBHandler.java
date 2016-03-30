@@ -33,6 +33,7 @@ public class DBHandler {
 	 *   Connect to the specified database
 	 */
 	public Connection getConnection() throws Exception {
+		@SuppressWarnings("rawtypes")
 		Class drvClass = Class.forName(dbDriverName); 
 		DriverManager.registerDriver((Driver) drvClass.newInstance());
 		return( DriverManager.getConnection(dbString, dbUser, dbPassword) );
@@ -51,6 +52,8 @@ public class DBHandler {
 	 *   End connection for use with upload, commit transaction or rollback as needed.
 	 */	
 	public void endUpload(Connection conn) {
+		if (conn == null) return;
+		
 		try {
 			conn.commit();
 		} catch (SQLException ex) {
