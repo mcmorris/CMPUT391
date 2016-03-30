@@ -3,18 +3,7 @@
  */
 package model;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.*;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import session.CredentialHandler;
-import session.DBHandler;
 
 /**
  * @author mcmorris
@@ -23,7 +12,7 @@ import session.DBHandler;
 public class Group {
   
   // Add a group to groups.
-  public void add(Connection conn, String gName, String curUser) {
+  public void add(Connection conn, String gName, String curUser) throws SQLException {
 	  if (conn == null) return;
 		
 		// Real world, would check to ensure a group with this name for this user does not already exist, and that group is not named "private" or "public".  Not included here, not in assignment specs.
@@ -35,7 +24,7 @@ public class Group {
   }
   
   // Get a group from groups.
-  public ResultSet get(Connection conn, int groupId) {
+  public ResultSet get(Connection conn, int groupId) throws SQLException {
     ResultSet results = null;
     
     if (conn != null) {
@@ -49,7 +38,7 @@ public class Group {
   }
   
     // Get a group from groups.
-  public ResultSet getByName(Connection conn, String name) {
+  public ResultSet getByName(Connection conn, String name) throws SQLException {
     ResultSet results = null;
     
     if (conn != null) {
@@ -63,7 +52,7 @@ public class Group {
   }
   
   // Get owner groups from groups.
-  public ResultSet getGroups(Connection conn, String curUser) {
+  public ResultSet getGroups(Connection conn, String curUser) throws SQLException {
     ResultSet results = null;
     
     if (conn != null) {
