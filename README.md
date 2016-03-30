@@ -2,32 +2,27 @@
 CMPUT 391 - Group Project - Online Image Sharing System
 
 Online Image Sharing is a JSP HTML5 website that is connected to Oracle sql Database. This is connected through JDBC.The webserver is connected by TomCat. THe website stores user's images and allows targeted access to other users.
-Table of Contents
-Modules
-- Login Module
-- Search Module
-- Sensor and User Management Module
-- Subscribe Module
-- Uploading Module
-- Data Analysis Module
-Installation
-Sources Used
-Modules
+
+
 Login Module
+The login module is contains two parts, the login section and registration section
 
-The login module is contains two parts, the login section and personal/password change section.
+In the login section the user is given inputs to input a username and password. Depending on what type the user is they are given certain areas of the website to view. For example the if the user is administrator then they are given the view to create and change users, but this view is not available to a general user.
 
-In the login section the user is given inputs to input a username and password. Depending on what type the user is they are given certain areas of the website to view. For example the if the user is administrator then they are given the view to create and change users, but this view is not available to the scientist or data manager.
+
 Search Module
+This module allows the user to search from the database for pictures depending on keyword. The first field takes the keyword search and the results are placed in an order of importance.
 
-This module allows the user to search from the database for sensors that they are subscribed to between different dates. The first field is the inputing keywords for searching audio and image description or seaching scalar values. The second is searching location of sensors. The sensor type field allow the search of different sensors. Finally the last field is setting the range of dates you are searching between.
+They can either input keyword or time periods.
 
-They can either input keyword/value, sensor type or location or all of them.
+Upload Module 
+This module allows users to upload images and input information pertaining to them. The field that would be optional inputs are security specification, subject, place, and description. The photo's id is handles by an image sequence table in SQL. 
 
-This is all done in one page, the search page.
-Sensor and User Management Module
+Display Module
+The display module allows users to view their previous uploads through thumbnails. Upon clicking on one the image would be viewed at full magnification and the option for changing the security preferences and viewing group is present. 
+data analysis module 
 
-This modual allows only the admin to add delete sensors and also admin is the only one that can mange users. The admin can create/delete users and also to change the password for the user.
+This modual allows only the admin to add delete sensors and also admin is the only one that can manage users. The admin can create/delete users and also to change the password for the user.
 
 When the admin click "User and Sensor Management" a popup box will apear and 4 choices will be available :
 This is a New User
@@ -57,7 +52,7 @@ Step 1: Since this site uses TomCat please place the souce code in the webbapps 
 
 Step 2: Once this is done please makes sure you edit Db.java to your database information.
 
-oos-cmput391/WEB-INF/classes/util/Db.java
+cmput391/WEB-INF/scr/util/Db.java
 
 32    static final String USERNAME = "Username";
 33    static final String PASSWORD = "*****";
@@ -93,7 +88,7 @@ or
 
 $ starttomcat
 
-Note: Only available in the university of Alerta computer labs. (to stop ctrl+C in the terminal where tomcat is)
+Note: Only available in the university of Alberta computer labs. (to stop ctrl+C in the terminal where tomcat is)
 
 Step 6: Now you can go to web and view the site
 
@@ -102,17 +97,4 @@ http://[serverURL]/oos-cmput391/
 Sources Used
 
 Used the example code from class
-
-    Audio Stream to file: https://forum.processing.org/two/discussion/4339/how-to-save-a-wav-file-using-audiosystem-and-audioinputstream-of-javasound
-    Blob to byte-array: http://stackoverflow.com/questions/6662432/easiest-way-to-convert-a-blob-into-a-byte-array
-    Blob to image to display on jsp: http://stackoverflow.com/questions/2438375/how-to-convert-bufferedimage-to-image-to-display-on-jsp
-    Bufferedimage to blob: http://stackoverflow.com/questions/7645068/how-can-i-convert-a-bufferedimage-object-into-an-inputstream-or-a-blob
-    Check if ResultSet is empty: http://stackoverflow.com/questions/867194/java-resultset-how-to-check-if-there-are-any-results
-    Create thumbnail (thumbnailer lib): https://github.com/coobird/thumbnailator/wiki/Examples
-    Create checkbox and push value to servlet: http://stackoverflow.com/questions/19562140/delete-a-row-from-table-and-database-on-clicking-checkbox-using-jsp
-    Dialog box: https://jqueryui.com/dialog/
-    Files to database: http://www.codejava.net/coding/upload-files-to-database-servlet-jsp-mysql
-    Inputstream for html file upload: http://stackoverflow.com/questions/5730532/values-of-input-text-fields-in-a-html-multipart-form
-    Submit checkbox check: http://stackoverflow.com/questions/22557055/submit-form-only-if-at-least-one-checkbox-is-checked
-    Write text lines to Outputstream: http://www.tutorialspoint.com/java/io/outputstreamwriter_write_string.htm
 
