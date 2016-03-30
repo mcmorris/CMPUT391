@@ -25,7 +25,10 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		boolean valid = false;
-
+		
+		String user = request.getParameter("userid");
+		String pwd = request.getParameter("password");
+		
 		try {
 			valid = CredentialHandler.getInstance().isValidLogin(user, pwd);
 			if(valid) {

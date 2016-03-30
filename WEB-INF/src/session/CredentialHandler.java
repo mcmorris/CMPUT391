@@ -8,6 +8,7 @@ import java.sql.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -30,7 +31,7 @@ public class CredentialHandler {
 	/*
 	 * Create a new session with user from request
 	 */
-	protected void createSession(HttpServletRequest request, int timeoutMin) {
+	protected void createSession(HttpServletRequest request, HttpServletResponse response, int timeoutMin) {
 		String user = request.getParameter("USERID");
 		
 		HttpSession session = request.getSession();

@@ -3,13 +3,10 @@
  */
 package session;
 
-import java.io.IOException;
-import java.sql.*; 
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * @author mcmorris
@@ -17,7 +14,7 @@ import javax.servlet.http.HttpSession;
  */
 public class DBHandler {
 	private static String dbUser = "mcmorris";
-    	private static String dbPassword = "oracleseat5mules";
+    private static String dbPassword = "oracleseat5mules";
 	private static String dbDriverName = "oracle.jdbc.driver.OracleDriver";
 	private static String dbString = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS";
 	private static DBHandler instance = null;
@@ -44,8 +41,8 @@ public class DBHandler {
 	/*
 	 *   Start a connection for use of upload.
 	 */
-	public Connection startUpload() {
-		conn = getConnection();
+	public Connection startUpload() throws Exception {
+		Connection conn = getConnection();
 		conn.setAutoCommit(false);
 		return conn;
 	}
@@ -53,7 +50,7 @@ public class DBHandler {
 	/*
 	 *   End connection for use with upload, commit transaction or rollback as needed.
 	 */	
-	public void endUpload(conn) {
+	public void endUpload(Connection conn) {
 		try {
 			conn.commit();
 		} catch (SQLException ex) {
@@ -75,7 +72,7 @@ public class DBHandler {
 		}
 		// Catch rollback / close error.
 		catch (SQLException sqle) {
-			out.println("<hr>" + sqle.getMessage() + "<hr>");
+			System.out.println("<hr>" + sqle.getMessage() + "<hr>");
 		}
 		// Regardless of rollback, attempt close.
 		finally 

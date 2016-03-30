@@ -36,7 +36,10 @@ public class RegisterServlet extends HttpServlet {
 			User u = new User();
 			u.add(conn, request);
 			
-			valid = u.isAvailable(user, pwd);
+			String user = request.getParameter("USERID");
+			String pwd = request.getParameter("PASSWD");
+			
+			valid = u.isAvailable(conn, user, pwd);
 			if(valid) {
 				Person p = new Person();
 				u.add(conn, request);
@@ -56,12 +59,12 @@ public class RegisterServlet extends HttpServlet {
 			out.println("<hr>" + ex.getMessage() + "<hr>");
 		}
 		
-	        if (valid == false) {
-	            RequestDispatcher rd = getServletContext().getRequestDispatcher("/register.html");
-	            out.println("<font color=red>The credentials in your registration request cannot be used.  Please try again.</font>");
-	            rd.include(request, response);
-	        }
+	    if (valid == false) {
+	    	RequestDispatcher rd = getServletContext().getRequestDispatcher("/register.html");
+	        out.println("<font color=red>The credentials in your registration request cannot be used.  Please try again.</font>");
+	        rd.include(request, response);
+	    }
 	        
-    	}
+    }
 
 }
