@@ -32,7 +32,7 @@ public class GroupServlet extends HttpServlet {
 		
 		PrintWriter out = response.getWriter();
 		Connection conn = null;
-		int groupId = -1;
+		int gId = -1;
 		
 		try {
 			//establish connection to the underlying database
@@ -93,6 +93,5 @@ public class GroupServlet extends HttpServlet {
 		
 		return isValid;
 	}
-
 
 }

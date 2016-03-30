@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import session.CredentialHandler;
 import session.DBHandler;
 
+import model.GroupList;
+
 /**
  * @author mcmorris
  *
@@ -28,6 +30,7 @@ public class FriendServlet extends HttpServlet {
 		String gIdStr = request.getParameter("GROUPID");
 		String selUser = request.getParameter("SELUSER");
 		String mode = request.getParameter("MODE");
+		int gId = Integer.parseInt(gIdStr);
 		
 		PrintWriter out = response.getWriter();
 		Connection conn = null;
@@ -37,8 +40,7 @@ public class FriendServlet extends HttpServlet {
 			conn = DBHandler.getInstance().getConnection();
 			conn.setAutoCommit(false);
 			
-			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
-			int gId = Integer.parseInt(gIdStr);
+			String user = CredentialHandler.getInstance().getSessionUserName(request);
 			
 			GroupList gl = new GroupList();
 			if(mode == "add") {

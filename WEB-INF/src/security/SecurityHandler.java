@@ -43,7 +43,7 @@ public class SecurityHandler {
 		try
 		{
 			String picSql = "select owner_name from images where photo_id = '" + pictureId + "'";
-			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+			String user = CredentialHandler.getInstance().getSessionUserName(request);
 			
 			conn = DBHandler.getInstance().getConnection();
 			
@@ -82,7 +82,7 @@ public class SecurityHandler {
 		try
 		{
 			String groupSql = "select user_name from groups where group_id = '" + groupId + "'";
-			String user = CredentialHandler.getInstance().getSessionUserName(request, response);
+			String user = CredentialHandler.getInstance().getSessionUserName(request);
 			
 			conn = DBHandler.getInstance().getConnection();
 			
