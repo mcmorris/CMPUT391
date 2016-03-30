@@ -110,7 +110,7 @@ END;
 
 CREATE TABLE image_views (
    photo_id    int,
-   views    int,
+   views       int,
    PRIMARY KEY(photo_id),
    FOREIGN KEY(photo_id) REFERENCES images
 );
