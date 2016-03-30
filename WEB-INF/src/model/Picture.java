@@ -48,7 +48,7 @@ public class Picture {
 		BufferedImage thumbNail = shrink(img, 10);
 		
 		// Oracle is the stupid, and requires all blobs to be inserted as empty objects during add.
-		PreparedStatement pstmt = conn.prepareStatement("insert into photos values(0, ?, ?, ?, ?, ?, ?, empty_blob(), empty_blob())");
+		PreparedStatement pstmt = conn.prepareStatement("insert into images values(0, ?, ?, ?, ?, ?, ?, empty_blob(), empty_blob())");
 		pstmt.setString(1, ownerName);
 		pstmt.setInt(2, permitted);
 		pstmt.setString(3, subject);
@@ -144,7 +144,7 @@ public class Picture {
 			
 			conn = DBHandler.getInstance().getConnection();
 			
-			PreparedStatement pstmt = conn.prepareStatement("SELECT owner_name, permitted from photos WHERE photo_id = ?;");
+			PreparedStatement pstmt = conn.prepareStatement("SELECT owner_name, permitted from images WHERE photo_id = ?;");
 			pstmt.setInt(1, pictureId);
 			results = pstmt.executeQuery();
 			while(results != null && results.next()) {

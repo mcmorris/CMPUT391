@@ -20,7 +20,7 @@ public class User {
 	 * Add a profile to Person.
 	 */
 	public void add(Connection conn, HttpServletRequest request) throws SQLException {
-	    	if (conn == null) return;
+	    if (conn == null) return;
 			
 		String user = request.getParameter("USERID");
 		String pwd = request.getParameter("PASSWD");
